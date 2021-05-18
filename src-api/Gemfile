@@ -9,9 +9,9 @@ gem 'middleman-sprockets', '~> 4.1.0'
 gem 'rouge', '~> 2.0.5'
   <<<<<<< dependabot/bundler/src-api/nokogiri-1.11.0
 gem 'redcarpet', '~> 3.4.0'
-gem 'nokogiri', '~> 1.11.0'
+gem 'nokogiri', '~> 1.11.4'
   =======
 gem 'redcarpet', '~> 3.5.1'
-gem 'nokogiri', '~> 1.10.8'
+gem 'nokogiri', '~> 1.11.4'
   >>>>>>> master
 gem "therubyracer"
