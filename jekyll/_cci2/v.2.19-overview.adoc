@@ -1,10 +1,14 @@
+---
+version:
+- Server v2.x
+- Server Admin
+---
 = CircleCI Server v2.19.x What's New
 :page-layout: classic-docs
 :page-liquid:
 :icons: font
 :toc: macro
 :toc-title:
-:sectanchors:
 
 This document provides a summary of features and product notes for the release of CircleCI Server v{serverversion}. For a full list of changes, including patch releases, refer to the https://circleci.com/server/changelog[changelog]. For a step by step guide to **upgrading** your CircleCI Server installation to v{serverversion}, see our <<updating-server#nomad-launch-configuration,upgrade guide>>.
 
@@ -24,6 +28,8 @@ WARNING: If you are upgrading from pre v2.18.x, and have at any time changed you
 
 ## Known Issues
 
+* On static (non-AWS) installations with `NONE` selected under storage driver settings, tests can be split only by file name or file size. If a user attempts to split tests by timing data, static instances will split them by file name instead.
+
 * **If you are using an HTTP proxy for your installation, upgrade to v2.19.02 or above**. We had a known issue around job step logging and docker commands customization that made pre-2.19.2 releases incompatible with an HTTP proxy setup of CircleCI Server.
 
 * The first user to access a CircleCI Server installation should be granted admin access. Currently, there is an issue preventing this from happening when LDAP authentication is in use. Follow https://circleci.com/docs/2.0/authentication#grant-admin-access-to-user[this guide] for a workaround.
@@ -35,6 +41,48 @@ WARNING: If you are upgrading from pre v2.18.x, and have at any time changed you
 TIP: For more information on SSH reruns in Server installations, see the https://circleci.com/docs/2.0/ssh-server/[SSH Rerun Architecture in Server] guide.
 
 * Classic Load Balancer is no longer available from v2.19.02 due to the ciphersuite changes listed in the notes below. CircleCI no longer accepts requests from https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/elb-ssl-security-policy.html[Classic Load Balancer], so you should move to https://docs.aws.amazon.com/elasticloadbalancing/latest/network/introduction.html[Network Load Balancer (NLB)] or https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html[Application Load Balancer (ALB)].
+
+## What's New in v2.19.12
+
+* Removed support for 1.0 builder graceful shutdown on auto-scaling events.
+  ** This alleviates Python 2 security vulnerabilities.
+
+## What's New in v2.19.11
+
+* Fixed a bug that didn't allow more than 50 aliases in a configuration.
+
+## What's New in v2.19.10
+
+* Fixed a bug that caused 'git checkout' to fail in go-git.
+* Fixed a bug in the YAML parser in picard dispatcher to support `config-str` to have more than 50 YAML aliases.
+* Fixed a bug where s3 retention policy deleted test results from an older job.
+* Reduced the likelihood of 'out-of-sequence' commit statuses.
+* General security updates.
+
+## What's New in v2.19.09
+
+* Better handling of non-alphanumeric characters in authentication passwords for Docker executors. Fixed a bug that was preventing the use of `~` and `?` in the https://circleci.com/docs/2.0/private-images/#docker-executor[Docker ID password field under the `auth` key].
+* General security updates.
+
+## What's New in v2.19.08
+
+* Fixed a bug that was causing parallelism to fail for static installations with `NONE` selected under storage driver settings.
+
+## What's New in v2.19.07
+
+* Fixed a bug that was preventing authentication to China region ECR images in the docker executor.
+
+* Removed the recursive `chown` from startup of the `fileserverd` service. In instances of heavy usage this was causing the startup process to take a long time, or in some cases, startup was blocked.
+
+## What's New in v2.19.06
+
+* Fixed a bug that was causing workflow statuses to be displayed on GitHub in the wrong order.
+
+* Introduced performance improvements to `workflows-conductor` that dramatically reduce CPU usage and latency.
+
+* Fixed a bug that was preventing use of an S3 storage region other than `us-east-1` via an IAM user.
+
+* Fixed formatting type of SMTP passwords to ensure they are masked during setup.
 
 ## What's New in v2.19.05
 
@@ -96,4 +144,3 @@ TIP: For more information on SSH reruns in Server installations, see the https:/
 * CircleCI Server installations on AWS can now be https://github.com/circleci/enterprise-setup#configuration[configured to work on GovCloud].
 
 * The image used to run the RabbitMQ server has been updated to fix vulnerabilities.
-

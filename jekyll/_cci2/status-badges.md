@@ -2,6 +2,9 @@
 layout: classic-docs
 title: Adding Status Badges
 description: How to embed a CircleCI status badge in any web page or document
+version:
+- Cloud
+- Server v2.x
 ---
 
 This document describes how to create a badge that displays your project's build status (passed or failed) in a README or other document.
@@ -117,7 +120,7 @@ image:https://circleci.com/gh/circleci/circleci-docs/tree/teesloane-patch-5.svg?
 
 ```
 
-## Creating Badges for Private Repositories
+## Creating badges for private repositories
 
 
 **NOTE:** To create a status badge for a private project you will need to
@@ -147,6 +150,6 @@ To use the shield style, replace `style=svg` with `style=shield` in the link you
 ![Failing shield version]({{ site.baseurl }}/assets/img/docs/shield-failing.png)
 
  
-## See Also
+## See also
 
 [Status]({{ site.baseurl }}/2.0/status/)

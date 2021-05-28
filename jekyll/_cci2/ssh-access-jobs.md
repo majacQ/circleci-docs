@@ -5,6 +5,9 @@ short-title: "Debugging with SSH"
 description: "How to access a build container using SSH on CircleCI 2.0"
 categories: [troubleshooting]
 order: 20
+version:
+- Cloud
+- Server v2.x
 ---
 
 This document describes how to access a build container using SSH on CircleCI 2.0 in the following sections:
@@ -40,12 +43,12 @@ The build VM will remain available for an SSH connection for **10 minutes after 
 
 **Note**: If your job has parallel steps, CircleCI launches more than one VM to perform them. Thus, you'll see more than one 'Enable SSH' and 'Wait for SSH' section in the build output.
 
-## Debugging: "Permission denied (publickey)"
+## Debugging: "permission denied (publickey)"
 
 If you run into permission troubles trying to SSH to your job, try
 these things:
 
-### Ensure Authentication With GitHub/Bitbucket
+### Ensure authentication with GitHub/Bitbucket
 {:.no_toc}
 
 A single command can be used to test that your keys are set up as expected. For
@@ -77,7 +80,7 @@ If you _don't_ see output like that, you need to start by
 [troubleshooting your SSH keys with GitHub](https://help.github.com/articles/error-permission-denied-publickey)/
 [troubleshooting your SSH keys with Bitbucket](https://confluence.atlassian.com/bitbucket/troubleshoot-ssh-issues-271943403.html).
 
-### Ensure Authenticating as the Correct User
+### Ensure authenticating as the correct user
 {:.no_toc}
 
 If you have multiple accounts, double-check that you are
@@ -90,7 +93,7 @@ If you're authenticating as the wrong user, you can probably resolve this
 by offering a different SSH key with `ssh -i`. See the next section if
 you need a hand figuring out which key is being offered.
 
-### Ensure the Correct Key is Offered to CircleCI
+### Ensure the correct key is offered to CircleCI
 {:.no_toc}
 
 If you've verified that you can authenticate as the correct
@@ -104,7 +107,7 @@ running:
 ```
 $ ssh -v git@github.com
 
-# or
+# Or
 
 $ ssh -v git@bitbucket.com
 ```
@@ -137,7 +140,7 @@ argument to SSH. For example:
 $ ssh -i /Users/me/.ssh/id_rsa_github -p 64784 ubuntu@54.224.97.243
 ```
 
-## See Also
+## See also
 {:.no_toc}
 
 [GitHub and Bitbucket Integration](  {{ site.baseurl }}/2.0/gh-bb-integration/)

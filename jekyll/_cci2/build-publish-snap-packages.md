@@ -5,30 +5,36 @@ short-title: "Build & Publish Snap Packages"
 description: "How to build and publish Snap packages on CircleCI using Snapcraft."
 categories: [containerization]
 order: 20
+version:
+- Cloud
+- Server v2.x
 ---
 
 Snap packages provide a quick way to publish your software on multiple Linux distributions (distros). This document shows you how to build a snap package and publish it to the Snap Store using CircleCI.
 
 ## Overview
 
-A .snap file can be created once and installed on any Linux distros that supports `snapd` such as Ubuntu, Debian, Fedora, Arch, and more. More information on Snapcraft itself can be found on [Snapcraft's website](https://snapcraft.io/).
+A `.snap` file can be created once and installed on any Linux distro that supports `snapd`, such as Ubuntu, Debian, Fedora, Arch, and more. More information on Snapcraft itself can be found on [Snapcraft's website](https://snapcraft.io/).
 
-Building a snap on CircleCI is mostly the same as your local machine, wrapped with [CircleCI 2.0 syntax](https://circleci.com/docs/2.0/configuration-reference/). This document describes how to build a snap package and publish it to the [Snap Store](https://snapcraft.io/store) via CircleCI. The following sections use snippets of a sample `.circleci/config.yml` file with the full version at the [end of this doc](#full-example-config).
+Building a snap on CircleCI is mostly the same as on your local machine, wrapped with [CircleCI 2.0 syntax](https://circleci.com/docs/2.0/configuration-reference/). This document describes how to build a snap package and publish it to the [Snap Store](https://snapcraft.io/store) via CircleCI. The following sections use snippets of a sample `.circleci/config.yml` file with the full version at the [end of this doc](#full-example-config).
 
 ## Prerequisites
 
 To build a snap in any environment (local, company servers CI, etc) there needs to be a Snapcraft config file. Typically this will be located at `snap/snapcraft.yml`. This doc assumes you already have this file and can build snaps successfully on your local machine. If not, you can read through the [Build Your First Snap](https://docs.snapcraft.io/build-snaps/your-first-snap) doc by Snapcraft to get your snap building on your local machine.
 
 
-## Build Environment
+## Build environment
 
 ```yaml
-#...
+# ...
 version: 2
 jobs:
   build:
     docker:
       - image: cibuilds/snapcraft:stable
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
 #...
 ```
 
@@ -60,7 +66,7 @@ Publishing a snap is more or less a two-step process. Here's on this might look 
 
 ```Bash
 snapcraft login
-# follow prompts for logging in with an Ubuntu One account
+# Follow prompts for logging in with an Ubuntu One account
 snapcraft export-login snapcraft.login
 base64 snapcraft.login | xsel --clipboard
 ```
@@ -84,7 +90,7 @@ base64 snapcraft.login | xsel --clipboard
 
 In this example, Snapcraft automatically looks for login credentials in `.snapcraft/snapcraft.cfg` and the environment variable made previously is decoded into that location. The `snapcraft push` command is then used to upload the .snap file into the Snap Store.
 
-### Uploading vs Releasing
+### Uploading vs releasing
 
 `snapcraft push *.snap` by default will upload the snap to the Snap Store, run any store checks on the server side, and then stop. The snap won't be "released" meaning users won't automatically see the update. The snap can be published locally with the `snap release <release-id>` command or by logging into the Snap Store and clicking the release button.
 
@@ -117,7 +123,7 @@ Utilize CircleCI `workspaces` to move a generated snap file between jobs when ne
 Below is a complete example of how a snap package could be built on CircleCI. This same process is used the build the Snap pakcage for the [CircleCI Local CLI][local-cli-repo].
 
 
-## Full Example Config
+## Full example config
 
 ```yaml
 version: 2
@@ -125,6 +131,9 @@ jobs:
   build:
     docker:
       - image: cibuilds/snapcraft:stable
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run:
@@ -138,6 +147,9 @@ jobs:
   publish:
     docker:
       - image: cibuilds/snapcraft:stable
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - attach_workspace:
           at: .

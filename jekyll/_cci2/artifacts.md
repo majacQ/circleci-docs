@@ -3,8 +3,10 @@ layout: classic-docs
 title: "Storing Build Artifacts"
 short-title: "Storing Build Artifacts"
 description: "Example of uploading artifacts created during a build"
-categories: [configuring-jobs]
 order: 70
+version:
+- Cloud
+- Server v2.x
 ---
 
 This document describes how to work with Artifacts in the following sections:
@@ -12,7 +14,7 @@ This document describes how to work with Artifacts in the following sections:
 * TOC
 {:toc}
 
-## Artifacts Overview
+## Artifacts overview
 
 Artifacts persist data after a job is completed
 and may be used for storage of the outputs of your build process.
@@ -44,7 +46,7 @@ Keep this in mind
 if you are expecting
 to find artifacts at a given path within the application.
 
-## Uploading Artifacts
+## Uploading artifacts
 
 To upload artifacts created during builds, use the following example:
 
@@ -54,6 +56,9 @@ jobs:
   build:
     docker:
       - image: python:3.6.3-jessie
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
 
     working_directory: /tmp
     steps:
@@ -81,7 +86,7 @@ Currently, `store_artifacts` has two keys: `path` and `destination`.
   - `path` is a path to the file or directory to be uploaded as artifacts.
   - `destination` **(Optional)** is a prefix added to the artifact paths in the artifacts API. The directory of the file specified in `path` is used as the default.
 
-## Uploading Core Files
+## Uploading core files
 
 This section describes how to get [core dumps](http://man7.org/linux/man-pages/man5/core.5.html) and push them as artifacts for inspection and debugging. The following example creates a short C program that runs [`abort(3)`](http://man7.org/linux/man-pages/man3/abort.3.html) to crash the program.
 
@@ -112,6 +117,9 @@ jobs:
   build:
     docker:
       - image: gcc:8.1.0
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     working_directory: ~/work
     steps:
       - checkout
@@ -138,7 +146,7 @@ Finally, the core dump files are stored to the artifacts service with `store_art
 When CircleCI runs a job,
 a link to the core dump file appears in the Artifacts tab of the **Job page**.
 
-## Downloading All Artifacts for a Build on CircleCI
+## Downloading all artifacts for a build on CircleCI
 
 To download your artifacts with `curl`,
 follow the steps below.
@@ -159,19 +167,18 @@ for all variables that start with `:`.
 ```bash
 export CIRCLE_TOKEN=':your_token'
 
-curl https://circleci.com/api/v1.1/project/:vcs-type/:username/:project/$build_number/artifacts?circle-token=$CIRCLE_TOKEN \
+curl -H "Circle-Token: $CIRCLE_TOKEN" https://circleci.com/api/v1.1/project/:vcs-type/:username/:project/:build_num/artifacts \
    | grep -o 'https://[^"]*' \
-   | sed -e "s/$/?circle-token=$CIRCLE_TOKEN/" \
-   | wget -v -i -
+   | wget --verbose --header "Circle-Token: $CIRCLE_TOKEN" --input-file -
 ```
 
 Similarly, if you want to download the _latest_ artifacts of a build, replace the curl call with a URL that follows this scheme:
 
 ```bash
-curl https://circleci.com/api/v1.1/project/:vcs-type/:username/:project/latest/artifacts?circle-token=:your_token
+curl -H "Circle-Token: <circle-token>" https://circleci.com/api/v1.1/project/:vcs-type/:username/:project/latest/artifacts
 ```
 
-You can read more about using CircleCI's API to interact with artifacts in our [API reference guide](https://circleci.com/docs/api/#artifacts).
+You can read more about using CircleCI's API to interact with artifacts in our [API reference guide](https://circleci.com/docs/api/v1/#artifacts).
 
 Placeholder   | Meaning                                                                       |
 --------------|-------------------------------------------------------------------------------|
@@ -182,7 +189,7 @@ Placeholder   | Meaning                                                         
 `:build_num`  | The number for the build for which you want to download artifacts.
 {: class="table table-striped"}
 
-### Description of Commands
+### Description of commands
 {:.no_toc}
 
 First, the CIRCLE_TOKEN environment variable is created. Then, the `curl`
@@ -192,7 +199,7 @@ create a unique file name. Finally, `wget` is used to download the artifacts to
 the current directory in your terminal.
 
 
-## See Also
+## See also
 {:.no_toc}
 
 [Caching Dependencies]({{ site.baseurl }}/2.0/caching/)

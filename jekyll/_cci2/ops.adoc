@@ -1,11 +1,14 @@
+---
+version:
+- Server v2.x
+- Server Admin
+---
 = Maintenance
 :page-layout: classic-docs
 :page-liquid:
 :icons: font
 :toc: macro
 :toc-title:
-
-[.serveronly]_This document is intended for system administrators of self-hosted installations of CircleCI Server._
 
 This chapter describes system checks and the basics of user management.
 
@@ -180,7 +183,7 @@ Configuration secrets are stored in plain-text on the host.
 === What significant metrics will be generated?
 
 **Answer:**
-Refer to the <<monitoring#system-monitoring,Monitoring>> section for details about monitoring and metrics.
+Refer to the <<monitoring#system-monitoring-metrics,Monitoring>> section for details about monitoring and metrics.
 
 === How do I find out how many builds per day are running?
 

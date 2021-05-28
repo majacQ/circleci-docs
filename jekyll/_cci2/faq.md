@@ -5,6 +5,9 @@ short-title: "FAQ"
 description: "Frequently asked questions about CircleCI 2.0"
 categories: [migration]
 order: 1
+version:
+- Cloud
+- Server v2.x
 ---
 
 * TOC
@@ -138,7 +141,13 @@ jobs:
   build:
     docker:
       - image: your/primary-image:version-tag
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       - image: mysql:5.7
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         environment:
            TZ: "America/Los_Angeles"
     working_directory: ~/your-dir
@@ -179,7 +188,7 @@ Using Workflow config you can run multiple jobs at once or sequentially. You can
 
 ### Do you plan to add the ability to launch jobs on both Linux and Mac environments in the same workflow?
 {:.no_toc}
-Yes, this is supported. See the section for multiple executor types in the [Sample 2.0 `config.yml` Files]({{ site.baseurl }}/2.0/sample-config/#sample-configuration-with-multiple-executor-types-macos--docker) document.
+Yes, this is supported. See the section for multiple executor types in the [Sample 2.0 `config.yml` Files]({{ site.baseurl }}/2.0/sample-config/#sample-configuration-with-multiple-executor-types) document.
 
 ### Is it possible to split the `config.yml` into different files?
 {:.no_toc}
@@ -308,13 +317,11 @@ To find a list of your Active Users, log in to the CircleCI web app > click `Pla
 #### What happens when I run out of credits?
 {:.no_toc}
 
-On the Performance plan, when you reach 10% of your remaining credits, you will
-be refilled 25% of your credit subscription (at 25% the cost of your plan). For
-example, If your monthly package size is 25,000 credits, you will automatically
-be refilled 6,250 credits (at $.0006 each, not including applicable taxes) when
-you reach 2,500 remaining credits.
+On the **Performance plan**, when you reach 2% of your remaining credits, you will be refilled 25% of your credit subscription, with a minimum refill of 25,000 credits. For example, If your monthly package size is 100,000 credits, you will automatically be refilled 25,000 credits (at $.0006 each, not including applicable taxes) when you reach 2000 remaining credits.
 
 If you notice that your account is receiving repeated refills, review your credit usage by logging in to the CircleCI web app > click `Plan` > click `Plan Usage`. In most cases, increasing your credit package should minimize repeat refills. You can manage your plan by clicking `Plan Overview`.
+
+On the **free plan**, jobs will fail to run once you have run out of credits.
 
 #### Do credits expire?
 {:.no_toc}
@@ -327,7 +334,7 @@ You can pay from inside the CircleCI app for monthly pricing.
 #### When do I pay?
 {:.no_toc}
 
-On the Usage plans, at the beginning of your billing cycle, you will be charged for user seats, premium support tiers and your monthly credit allocation. Any subsequent credit refills _during_ the month (such as the auto-refilling back to 25% on reaching 10% of credits available) will be paid _at the time of the refill_.
+On the **Performance Plan**, at the beginning of your billing cycle, you will be charged for user seats, premium support tiers and your monthly credit allocation. Any subsequent credit refills _during_ the month (such as the auto-refilling at 25% on reaching 2% of credits available) will be paid _at the time of the refill_.
 
 #### Am I charged if my build is "Queued" or "Preparing"?
 
@@ -388,23 +395,9 @@ caching will provide no benefit.
 
 ### Container Based Plans
 
-#### What if I go over the minutes allotted for a Container-based macOS plan?
-
-Minutes and overages ensure we can stabilize capacity while offering as much power as possible which should hopefully lead to the greatest possible utility all around.
-
-Overages are as follows:
-- Seed & Startup: .08/minute
-- Growth: .05/minute
-
-Users will be alerted in-app as they approach the limit and upon passing their respective limit.
-
-Reach out to billing@circleci.com with any additional questions.
-
 #### How do I upgrade my container plan with more containers to prevent queuing?
 {:.no_toc}
 * Linux: Go to the Settings > Plan Settings page of the CircleCI app to increase the number of containers on your Linux plan. Type the increased number of containers in the entry field under the Choose Linux Plan heading and click the Pay Now button to enter your payment details. 
-
-* macOS: Go to the Settings > Plan Settings page of the CircleCI app and click the macOS tab in the upper-right. Then, click the Pay Now button on the Startup, Growth, or Mobile Focused plan to enter your payment details.
 
 #### Is there a way to share plans across organizations and have them billed centrally?
 {:.no_toc}
