@@ -6,7 +6,7 @@ There are two ways to work on CircleCI docs locally: with Docker and with [Ruby]
 ## 1. Local Development with Docker (recommended)
 
 1. Install Docker for your platform: <https://docs.docker.com/engine/installation/>
-1. Clone the CircleCI docs repo: `git clone --recurse-submodules https://github.com/circleci/circleci-docs.git`   
+1. Clone the CircleCI docs repo: `git clone --recurse-submodules https://github.com/circleci/circleci-docs.git`
 _(If you already cloned the project and forgot `--recurse-submodules`, run `git submodule update --init`)_
 1. Run `npm install` to fetch dependencies
 1. Run `npm run webpack-dev` to create needed js assets
@@ -20,7 +20,7 @@ _(If you already cloned the project and forgot `--recurse-submodules`, run `git 
 
 If you already have a stable Ruby environment (currently Ruby 2.3.3) and feel comfortable installing dependencies, install Jekyll by following [this guide](https://jekyllrb.com/docs/installation/).
 
-Check out the [Gemfile](Gemfile) for the Ruby version we're currently using. We recommend [RVM](https://rvm.io/) for managing multiple Ruby versions.
+Check out the [Gemfile](https://github.com/circleci/circleci-docs/blob/master/Gemfile) for the Ruby version we're currently using. We recommend [RVM](https://rvm.io/) for managing multiple Ruby versions.
 
 We also use a gem called [HTMLProofer](https://github.com/gjtorikian/html-proofer) to test links, images, and HTML. The docs site will need a passing build to be deployed, so use HTMLProofer to test everything before you push changes to GitHub.
 
@@ -51,6 +51,16 @@ JEKYLL serve -Iw
 Jekyll will build the site and start a web server, which can be viewed in your browser at <http://localhost:4000/docs/>. `-w` tells Jekyll to watch for changes and rebuild, while `-I` enables an incremental rebuild to keep things efficient.
 
 For more info on how to use Jekyll, check out [their docs](https://jekyllrb.com/docs/usage/).
+
+## Working on search
+
+If you want to work on the way search works on docs, follow the below instructions.
+
+1. Create your own [algolia](https://www.algolia.com/) account to use for development
+1. Either take your admin API key for your account, or create an API key with write permissions. Create a file `./jekyll/_algolia_api_key` with the API key as its content.
+1. Update the `application_id` and `api_key` fields in the algolia section of `./jekyll/_config.yml` to match your own account. Do not commit these changes.
+1. Index the blog content to your own account via `bundle exec jekyll algolia`. If you have docs running in a container via docker compose, you can run `docker exec -it circleci-docs_jekyll_1 /bin/bash` to SSH into the container, cd into `./jekyll` and run the aforementioned command. You will see an error regarding the number of records being too high - this shouldn't matter for development, just be aware the search index you're using locally is incomplete.
+1. You should now be able to search your own index via the locally running docs.
 
 ## Editing Docs Locally
 
@@ -130,9 +140,9 @@ Note that you'll need the command-line tool [jq](https://stedolan.github.io/jq/)
 Our API is handled in two possible places currently:
 - [Old version](https://circleci.com/docs/api/v1-reference/) - This currently
   accessible via the CircleCI landing page > Developers Dropdown > "Api"
-- [New Version using Slate](https://circleci.com/docs/api/#section=reference) -
+- [New Version using Slate](https://circleci.com/docs/api/v1/#section=reference) -
   A newer API guide, built with [Slate](https://github.com/lord/slate)
-  
+
 **What is Slate?**
 
 Slate is a tool for generating API documentation. Slate works by having a user
@@ -169,4 +179,9 @@ The following is an example workflow to contribute to a document (from Github, n
 - If you want to see your changes live before committing them, `cd` into
   `src-api` and run `bundle install` followed by `bundle exec middleman server`.
 - You may need a specific version of Ruby for bundler to work (2.3.1).
- 
+
+## Preview Deploy
+
+If your branch ends with `-preview` and passed all tests, docs pages are automatically deployed to our preview site. The link to the preview site will appear at the end `deploy-preview` job in CircleCI.
+
+Note that preview deploys will be automatically cleaned up after certain time so that you don't have to do it manually.

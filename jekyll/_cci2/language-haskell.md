@@ -5,6 +5,9 @@ short-title: "Haskell"
 description: "Building and Testing with Haskell on CircleCI 2.0"
 categories: [language-guides]
 order: 2
+version:
+- Cloud
+- Server v2.x
 ---
 
 This guide will help you get started with a basic Haskell application on
@@ -25,7 +28,7 @@ In the project you will find a commented CircleCI configuration file <a
 href="https://github.com/CircleCI-Public/circleci-demo-haskell/blob/master/.circleci/config.yml" target="_blank">`.circleci/config.yml`</a>.
 
 
-## Sample Configuration
+## Sample configuration
 
 {% raw %}
 
@@ -35,6 +38,9 @@ jobs:
   build:
     docker:
       - image: fpco/stack-build:lts
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - restore_cache:
@@ -67,7 +73,7 @@ jobs:
 
 {% endraw %}
 
-## Config Walkthrough
+## Config walkthrough
 
 Every `config.yml` starts with the [`version`]({{ site.baseurl }}/2.0/configuration-reference/#version) key.
 This key is used to issue warnings about breaking changes.
@@ -96,6 +102,9 @@ jobs:
   build:
     docker:
       - image: fpco/stack-build:lts
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
 ```
 
 We are now set to run the Haskell build tool `stack` in our environment. The remainder of our
@@ -164,7 +173,7 @@ Finally, we can take the built executable and store it as an artifact.
 
 Excellent! You are now setup on CircleCI with a Haskell app.
 
-## Common Trouble Shooting
+## Common troubleshooting
 
 The command `stack test` may fail with an out of memory error. Consider adding the `-j1` flag to the `stack test` command 
 as seen below (Note: this will reduce test execution to one core, decreasing memory usage as well, but may also increase your test execution time).
@@ -175,7 +184,7 @@ as seen below (Note: this will reduce test execution to one core, decreasing mem
           command: stack --no-terminal test -j1
 ```
 
-## See Also
+## See also
 {:.no_toc}
 
 See the [Deploy]({{ site.baseurl }}/2.0/deployment-integrations/) document for example deploy target configurations.

@@ -2,7 +2,9 @@
 ---
 @import 'variables';
 @import 'sidebar';
+@import 'subnav';
 @import 'instantsearch';
+@import 'tooltip';
 
 // General
 body{
@@ -13,11 +15,11 @@ body{
 	font-family: 'Roboto', sans-serif;
 }
 h1, h2, h3, h4, h5, h6 {
-	font-family: 'Roboto';
+	font-family: 'Roboto', sans-serif;
   font-weight: 500;
 }
 p {
-	font-family: 'Roboto';
+	font-family: 'Roboto', sans-serif;
 	color: $body-text-color;
 }
 
@@ -30,26 +32,28 @@ a {
 	}
 }
 
-div.main-body{
-	overflow: auto;
+.container-semi-fluid {
+  padding-left: 15px;
+  padding-right: 15px;
+  position: relative;
 }
+
+.container-semi-fluid,
+div.main-body{
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
 
 div.main-body {
+  overflow: auto;
 	display: flex;
-	max-width: 1200px;
-	margin: 0 auto;
 	background: #fff;
-}
-
-#hits-template {
-	display: block;
-	max-width: 1180px;
-	margin: 50px auto 0 auto;
 }
 
 .text-center-small-float-right {
   float: right;
-  @media screen and (max-width: $screen-sm) {
+  @media screen and (max-width: $screen-xs-max) {
     text-align: center;
     float: none;
   }
@@ -57,7 +61,7 @@ div.main-body {
 
 .text-center-small-float-left {
   float: left;
-  @media screen and (max-width: $screen-sm) {
+  @media screen and (max-width: $screen-xs-max) {
     text-align: center;
     float: none;
   }
@@ -143,7 +147,7 @@ nav.nav-toggle.two {
 // Article
 div.article-container{
 	float: left;
-	@media screen and (max-width: $screen-sm) {
+	@media screen and (max-width: $screen-xs-max) {
 		padding: 0 16px 0 16px;
 		width: 100%;
 	}
@@ -245,7 +249,7 @@ div.align-center{
 // Homepage
 body.homepage{
   .article-container{
-    @media screen and (max-width: $screen-sm) {
+    @media screen and (max-width: $screen-xs-max) {
   	  padding: 0 16px 0 16px;
       width: 100%;
     }
@@ -389,6 +393,41 @@ pre {
 
 .serveronly {
 	color: #4e9eb3; 
+}
+
+.server-version-badge {
+    background-color: white;
+    border: 1px solid #333;
+    padding: 2px 8px;
+    border-radius: 2px;
+    color: black;
+    margin: 0px 6px;
+    font-weight: bold;
+    font-size: 12px;
+    text-align: center;
+
+    &:first-child {
+      margin-left: 0px;
+    }
+}
+
+.server-version-popover {
+    background-color: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.server-version-wrapper {
+	display: flex;
+	align-items: center;
+  margin-bottom: 16px;
+  margin-top: -4px;
+
+  @media screen and (max-width: 1068px) {
+    margin: 0 0 16px 0;
+  }
 }
 
 /* Shows when screen > $screen-md, hides when smaller */

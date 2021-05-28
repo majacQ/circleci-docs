@@ -5,6 +5,9 @@ short-title: "Projects"
 description: "Description of projects"
 categories: [projects]
 order: 2
+version:
+- Cloud
+- Server v2.x
 ---
 
 A CircleCI project shares the name of the associated code repository and is visible on the Projects page of the CircleCI app. Projects are added by using the Add Project button.
@@ -14,7 +17,7 @@ the owner of on your VCS, or, _Follow_ any project in your organization to gain
 access to its pipelines and to subscribe to [email notifications]({{
 site.baseurl }}/2.0/notifications/) for the project's status.
 
-## Add Projects Page
+## Add projects page
 
 {:.tab.addprojectpage.Cloud}
 ![header]({{ site.baseurl }}/assets/img/docs/CircleCI-2.0-setup-project-circle101_cloud.png)

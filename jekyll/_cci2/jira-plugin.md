@@ -6,11 +6,11 @@ description: "Connecting JIRA with CircleCI"
 ---
 
 This document describes how you can connect JIRA to your CircleCI builds. With
-the CircleCI JIRA plugin, you can display your build statuses in Jira.
+the CircleCI JIRA plugin, you can display your build statuses in JIRA.
 
 **Note:** You have to be an JIRA admin to install this plugin.
 
-# Installation Steps
+# Installation steps
 
 1. Navigate to project settings and select `JIRA integration`
 ![]({{ site.baseurl }}/assets/img/docs/jira_plugin_1.png)
@@ -23,7 +23,7 @@ the CircleCI JIRA plugin, you can display your build statuses in Jira.
 
 ---
 
-# Viewing Build and Deploy Statuses in Jira 
+# Viewing build and deploy statuses in Jira
 
 With CircleCI orbs it is possible to display your build and deploy status
 in Jira Cloud. To do this, you will need to: 
@@ -52,6 +52,9 @@ jobs:
   build:
     docker:
       - image: 'cimg/base:stable'
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - run: echo "hello"
 ```

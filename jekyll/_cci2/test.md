@@ -2,18 +2,21 @@
 layout: classic-docs
 title: "Test"
 description: "CircleCI 2.0 test automation setup"
+version:
+- Cloud
+- Server v2.x
 ---
 
 Refer to the following video and documents for help with setting up your tests.
 
-## How to Build, Test, and Deploy Video Tutorial
+## How to build, test, and deploy video tutorial
 
 Watch the following video for a detailed tutorial of Docker, iOS, and Android builds.
 <div class="video-wrapper">
   <iframe width="560" height="315" src="https://www.youtube.com/embed/Qp-BA9e0TnA" frameborder="0" allowfullscreen></iframe>
 </div>
 
-## Running, Splitting, and Debugging Tests
+## Running, splitting, and debugging tests
 
 Document | Description
 ----|----------

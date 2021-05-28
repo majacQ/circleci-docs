@@ -4,6 +4,9 @@ title: "Using Yarn (an NPM alternative) on CircleCI"
 short-title: "Yarn Package Manager"
 categories: [how-to]
 description: "How to use the Yarn package manager on CircleCI."
+version:
+- Cloud
+- Server v2.x
 ---
 
 [Yarn](https://yarnpkg.com/) is an open-source package manager for JavaScript.
@@ -14,7 +17,7 @@ This can potentially speed up builds but, more importantly, can reduce errors re
 
 Yarn might already be installed in your build environment if you are using the [`docker` executor](https://circleci.com/docs/2.0/executor-types/#using-docker).
 With [Pre-built CircleCI Docker Images](https://circleci.com/docs/2.0/circleci-images/), the NodeJS image (`circleci/node`) already has Yarn preinstalled.
-If you are using one of the other language images such as `circleci/python` or `circleci/ruby`, there are two [image variants](https://circleci.com/docs/2.0/circleci-images/#image-variants) that will include Yarn as well as NodeJS.
+If you are using one of the other language images such as `circleci/python` or `circleci/ruby`, there are two [image variants](https://circleci.com/docs/2.0/circleci-images/#language-image-variants) that will include Yarn as well as NodeJS.
 These would be the `-node` and `-node-browsers` image variants.
 For example, using the Docker image `circleci/python:3-node` will give you a Python build environment with Yarn and NodeJS installed.
 
@@ -27,7 +30,8 @@ curl -o- -L https://yarnpkg.com/install.sh | bash
 ## Caching
 
 Yarn packages can be cached to improve CI build times.
-Here's an example:
+
+An example for Yarn 2:
 
 {% raw %}
 ```yaml
@@ -38,7 +42,7 @@ Here's an example:
             - yarn-packages-{{ checksum "yarn.lock" }}
       - run:
           name: Install Dependencies
-          command: yarn install --frozen-lockfile
+          command: yarn install --immutable
       - save_cache:
           name: Save Yarn Package Cache
           key: yarn-packages-{{ checksum "yarn.lock" }}
@@ -48,6 +52,27 @@ Here's an example:
 ```
 {% endraw %}
 
-## See Also
+An example for Yarn 1.x:
+
+{% raw %}
+```yaml
+#...
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Dependencies
+          command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+#...
+```
+{% endraw %}
+
+## See also
 
 [Caching Dependencies]({{ site.baseurl }}/2.0/caching/)

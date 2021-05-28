@@ -4,6 +4,8 @@ title: "Adding External Database Hosts for High Availability"
 category: [administration]
 order: 20
 description: "Configuring High Availability for CircleCI 2.0"
+version:
+- Server Admin
 ---
 
 High availability gives you the ability to replicate your CircleCI data and automate recovery from a single database instance failure, without downtime or service disruption. Work with a CircleCI Solutions Engineer to set up a custom HA configuration (requires Platinum Support). Get started by [opening a support ticket](https://support.circleci.com/hc/en-us/requests/new).
@@ -21,7 +23,7 @@ Before you configure an existing CircleCI installation for high availability, yo
 
 The steps in this document also assume that you have an existing clustered Terraform installation of CircleCI 2.0 on AWS—see [Installing CircleCI 2.0 on Amazon Web Services with Terraform]({{ site.baseurl }}/2.0/aws) for more information. To configure your existing CircleCI 2.0 installation for high availability, you must export the databases currently in use on the Services machine to new AWS instances. This procedure uses three instances for the MongoDB replica set and a new AWS Auto Scaling group for PostgreSQL.
 
-## MongoDB Instance Requirements
+## MongoDB instance requirements
 
 CircleCI supports MongoDB version 3.2.x (currently 3.2.11) and uses WiredTiger 3.2 as the backend storage engine. Consider the following when setting up your external database hosts:
 - To maximize performance, use hosts with more memory for MongoDB. Ideally size server RAM to fit all data and indexes that will be accessed regularly. The AWS R3 series is a good option for high memory within the AWS fleet.
@@ -61,7 +63,7 @@ net:
 
 **Note:** The members of the replica set authenticate using the client certificates. CircleCI connects to MongoDB using password authentication over an encrypted connection.
 
-### Setting Up the MongoDB hosts
+### Setting up the MongoDB hosts
 
 If you are brand new to MongoDB, see the [MongoDB on the AWS Cloud](https://docs.aws.amazon.com/quickstart/latest/mongodb/welcome.html) documentation which includes a ready to deploy CloudFormation configuration for you to use.
 
@@ -115,7 +117,7 @@ Eight databases are required for 2.0 services:
 * `permissions`, with extension `uuid-ossp` enabled
 * `vms`, with extension `uuid-ossp` enabled
 
-## Exporting Existing Databases
+## Exporting existing databases
 
 **Note:** You do not need to export any existing databases if you are creating a fresh HA install. These steps can be skipped.
 
@@ -134,11 +136,11 @@ Eight databases are required for 2.0 services:
 
 5. After the backup process is complete, a `.tar` file appears in the directory where you ran the script.
 
-## Restoring the Databases on the New Hosts
+## Restoring the databases on the new hosts
 
 **Note:** The process to restore the databases may vary based on your database configuration. Use the following sections as general guidelines. This process ensures that the Services machine is able to communicate with your external database servers.
 
-### Restoring MongoDB and PostgreSQL
+### Restoring mongodb and postgresql
 
 1. Untar the exported database files.
 
@@ -159,7 +161,7 @@ Eight databases are required for 2.0 services:
      psql -U $USERNAME $DBNAME < $EXPORTED_CIRCLECI_DBNAME.sql
      ```
 
-## Configuring Automatic Recovery
+## Configuring automatic recovery
 
 **Note:** Please see the Backups sections for more information on what is getting backed, and how that gets pulled into automatic recovery. 
 
@@ -265,7 +267,7 @@ docker logs -f frontend
 
 ## Backups
 
-### Backing Up MongoDB
+### Backing up MongoDB
 
 Regularly backup data mounted on EBS volumes using the following steps:
 
@@ -274,7 +276,7 @@ Regularly backup data mounted on EBS volumes using the following steps:
 3. To rejoin the replica set as a SECONDARY, restart the mongodb  process with `sudo service mongod start`.
 4. The SECONDARY begins serving traffic after replication catches up.
 
-### Backing Up Encryption Keys
+### Backing up encryption keys
 
 If you are running `1.48.4` or later, you must backup encryption keys. The encryption keys are stored in the Service machine and are used to encrypt various sensitive data.
 
@@ -284,7 +286,7 @@ The encryption keys are plain text files for easy backup from the `/data/circle/
 
 Restore the directory to the same location **before** starting up CircleCI.
 
-### Vault Requirements
+### Vault requirements
 
 Vault is required for the `contexts-service` to securely encrypt and decrypt shared contexts.
 
@@ -336,7 +338,7 @@ listener "tcp" {
 Proceed to Configuring Replicated, to continue with setting up CircleCI in HA mode. 
 
 
-## Configuring Replicated
+## Configuring replicated
 
 To securely pass Mongodb, Postgresql and Vault connection settings to services running in Replicated, use of customization files is required.
 

@@ -1,3 +1,8 @@
+---
+version:
+- Server v2.x
+- Server Admin
+---
 [#upgrade]
 = Upgrading a Server Installation
 :page-layout: classic-docs
@@ -5,8 +10,6 @@
 :icons: font
 :toc: macro
 :toc-title:
-
-[.serveronly]_This document is intended for system administrators of self-hosted installations of CircleCI Server._
 
 This document describes the process for upgrading your CircleCI Server installation to v{serverversion}. 
 
@@ -18,7 +21,7 @@ WARNING: *Before upgrading* to v2.19, follow <<update-nomad-clients#,this guide>
 
 == Org Rename Script
 
-CAUTION: If upgrading directly from v2.17 (or below) and you have **ever had issues with renaming an organization within CircleCI** or you suspect that an **organization rename might have happened at any point** follow the steps below. If you are running Server v2.18.x already you can skip this section.
+WARNING: If upgrading directly from v2.17 (or below) and you have **ever had issues with renaming an organization within CircleCI** or you suspect that an **organization rename might have happened at any point** follow the steps below. If you are running Server v2.18.x already you can skip this section.
 
 . SSH into your Services machine
 . REPL into `workflows-conductor` by running the following: `sudo docker exec -it workflows-conductor lein repl :connect 6005`
