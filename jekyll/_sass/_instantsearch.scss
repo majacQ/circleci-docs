@@ -15,72 +15,145 @@
   top: 70px;
 
   #search-box {
-    max-width: 1200px;
-    margin: 0 auto;
+    position: relative;
     display: block;
+    max-width: 400px;
 
-    .ais-search-box {
-      max-width: 400px;
+    .ais-SearchBox-submit {
+      position: absolute;
+      top: calc(50% - 20px/2);
 
-      @media screen and (min-width: $screen-sm) {
-        left: 6px;
+      svg {
+        width: 20px;
+        height: auto;
       }
+    }
+
+    .ais-SearchBox-reset {
+      position: absolute;
+      top: calc(50% - 14px/2);
+
+      svg {
+        width: 14px;
+        height: auto;
+        fill: #D8D8D8;
+      }
+    }
+
+    .ais-SearchBox-submit {
+      left: 0;
+    }
+
+    .ais-SearchBox-reset {
+      right: 0;
     }
 
     .instantsearch-search {
       @extend .base-input-style;
+      margin: 0;
+      padding: 1.5em 2em;
     }
   }
 }
 
-#hits-template {
+#hits-target {
+  padding: $spacing-small-vertical 0;
+  background: #FAFAFA;
   min-height: 500px;
-
-  @media screen and (min-width: $screen-sm) {
-    margin-top: $spacing-medium-vertical;
-  }
+  margin-top: $spacing-medium-vertical;
 
   h2 {
     padding-left: $spacing-small-vertical;
   }
 }
 
+#hits-target .tab-content {
+  margin-top: 24px;
+}
+
 .result-item-wrap {
-  padding: $spacing-small-vertical;
-  border-bottom: 1px solid $gray-200;
+  $result-vertical-spacing: $spacing-medium-vertical / 4;
+  $half-gutter-width: $grid-gutter-width / 2;
 
-  a strong {
-    font-family: "roboto";
-    font-size: $font-size-small;
+  padding: $result-vertical-spacing $half-gutter-width;
+  margin-left:  -$half-gutter-width;
+  margin-right: -$half-gutter-width;
+
+  .result-title {
+    font-size: 18px;
+    font-weight: $font-weight-bold;
+
+    .fa-external-link {
+      margin-left: 4px;
+      font-size: 80%;
+    }
   }
 
-  .content {
-    margin-top: 4px;
-    font-size: $font-size-small;
+  .result-content {
+    margin-top: 8px;
   }
 
-  .context {
+  .result-context {
     margin-top: 4px;
     color: $gray-dark;
-    font-size: $font-size-micro;
+    font-size: $font-size-small;
   }
 
-  em {
-    font-style: normal;
-    font-weight: bold;
+  .result-tag {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.7px;
+    padding: 4px 8px;
+    margin-right: 12px;
+    color: #343434;
+    background-color: white;
+    border: 0.5px solid #D8D8D8;
+  }
+
+  mark {
+    color: #1A649A;
+    background-color: rgba(#19639A, 0.05);
+    font-weight: $font-weight-bold;
   }
 
   &:hover {
-    background: $gray-100;
     cursor: pointer;
+    background: white;
   }
 }
 
-.ais-hits__empty {
-  margin-left: $spacing-small-vertical;
+ul.results-nav {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid #D8D8D8;
+
+  li {
+    font-weight: 500;
+    color: $gray-dark;
+
+    &.active {
+      color: $black-light;
+    }
+
+    .hits-count {
+      font-weight: $font-weight-thin;
+    }
+  }
 }
 
-.hits-target {
-  padding-top: $spacing-small-vertical;
-  background: #fff;
+// Showing/hiding search screen
+body.search-open {
+  .main-body {
+    display: none;
+  }
+
+  .sidebar-mobile-wrapper {
+    display: none;
+  }
+
+  #hits-target {
+    // To override an element style being applied by some JS we don't own, probably instantsearch
+    display: block !important;
+  }
 }

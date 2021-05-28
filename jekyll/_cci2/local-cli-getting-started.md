@@ -5,6 +5,9 @@ short-title: "Getting Started with the CircleCI CLI"
 description: "An introduction to interfacing with CircleCI from the command line"
 categories: [getting-started]
 order: 50
+version:
+- Cloud
+- Server v2.x
 ---
 
 # Overview
@@ -25,7 +28,7 @@ If some of these prerequisites sound unfamiliar, or you are new to the CircleCI 
 
 # Steps
 
-## Initialize a Git Repo
+## Initialize a git repo
 
 Let's start from the very basics: create a project and initialize a git repository. Refer to the below code block for a list of steps.
 
@@ -40,9 +43,9 @@ git add . # Stage every file to commit
 git commit -m "Initial commit" # create your first commit.
 ```
 
-## Connect Your Git Repo to a VCS
+## Connect your git repo to a VCS
 
-Great! We have a git repository set up, with one file that says "Hello World!". We need to connect out local git repository to a Version Control System - either GitHub or BitBucket. Let's do that now.
+Great! We have a git repository set up, with one file that says "Hello World!". We need to connect our local git repository to a Version Control System - either GitHub or BitBucket. Let's do that now.
 
 If you have installed and setup the Hub CLI, you can simply run:
 
@@ -61,7 +64,7 @@ git push --set-upstream origin master
 
 You now have a git repo that is connected to a VCS. The remote on your VCS ("origin") now matches your local work.
 
-## Download and Setup the CircleCI CLI
+## Download and set up the CircleCI CLI
 
 Next, we will install the CircleCI CLI and try out some of its features. To install the CLI on a unix machine run the following command in your terminal:
 
@@ -81,7 +84,7 @@ You'll be asked for your API token. Go to the [Account Settings](https://circlec
 
 Return to the CLI and paste in your API token to complete your setup.
 
-## Setup and Validate Our First Config
+## Setup and validate our first config
 
 Now it's time to create a configuration file in our project directory. 
 
@@ -102,6 +105,9 @@ jobs:
   build:
     docker:
       - image: circleci/ruby:2.4.2-jessie-node
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: echo "Hello World"
@@ -119,7 +125,7 @@ circleci config validate
 circleci config validate --help
 ```
 
-## Testing a Job before Pushing to a VCS
+## Testing a job before pushing to a VCS
 
 The CircleCI CLI enables you to test a job locally from the command line rather than having to push to your VCS. If a job in your configuration is proving problematic, this is a great way to try and debug it locally rather than using credits or minutes on the platform.
 
@@ -144,9 +150,9 @@ Hello World
 Success!
 ```
 	
-## Connect Your Repo to CircleCI
+## Connect your repo to CircleCI
 
-We will need to leave the terminal behind for this step. Head over to [the "Add Projects page"](https://circleci.com/add-projects). It's time to set up your project to run CI whenever you push code.
+We will need to leave the terminal behind for this step. Head over to [the "Add Projects page"](https://app.circleci.com/projects/project-dashboard/github/circleci/). It's time to set up your project to run CI whenever you push code.
 
 Find your project ("foo_ci", or whatever you named it on GitHub) in the list of projects and click "Set Up Project". Next, return to your terminal and push your latest changes to GitHub (the addition of our `config.yml` file.)
 
@@ -158,7 +164,7 @@ git push
 
 Returning to CircleCI in your browser, you can now click "start building" to run your build. 
 
-# Next Steps
+# Next steps
 
 This document provides a small overview to getting started with the CircleCI CLI tool. There are several more complex features that the CircleCI CLI offers:
 

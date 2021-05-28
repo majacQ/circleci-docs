@@ -7,10 +7,10 @@ The sections below describe the endpoints you may call to return Project informa
 ## Get All Followed Projects
 
 ```sh
-curl https://circleci.com/api/v1.1/projects?circle-token=:token
+curl https://circleci.com/api/v1.1/projects -H "Circle-Token: <circle-token>"
 ```
 
-```json
+```json5
 [ {
   "vcs_url": "https://github.com/circleci/mongofinil",
   "followed": true, // true if you follow this project in CircleCI
@@ -56,10 +56,10 @@ Returns an array of all projects you are currently following on CircleCI, with b
 ## Follow a New Project on CircleCI
 
 ```sh
-curl -X POST https://circleci.com/api/v1.1/project/:vcs-type/:username/:project/follow?circle-token=:token
+curl -X POST https://circleci.com/api/v1.1/project/:vcs-type/:username/:project/follow -H "Circle-Token: <circle-token>"
 ```
 
-```json
+```json5
 {
   "followed" : true,
   "first_build" : {
@@ -133,7 +133,7 @@ Follows a new project. CircleCI will then monitor the project for automatic buil
 curl https://circleci.com/api/v1.1/recent-builds?limit=1&shallow=true
 ```
 
-```json
+```json5
 [ {
   "vcs_url" : "https://github.com/circleci/mongofinil",
   "build_url" : "https://circleci.com/gh/circleci/mongofinil/22",
@@ -177,7 +177,7 @@ shallow | An optional boolean parameter that may be sent to improve performance 
 ## Recent Builds For A Single Project
 
 ```sh
-curl https://circleci.com/api/v1.1/project/:vcs-type/:username/:project?circle-token=:token&limit=20&offset=5&filter=completed
+curl https://circleci.com/api/v1.1/project/:vcs-type/:username/:project?limit=20&offset=5&filter=completed -H "Circle-Token: <circle-token>"
 ```
 
 >**Note:** You can narrow the builds to a single branch by appending /tree/:branch to the url. Note that the branch name should be url-encoded.
@@ -188,7 +188,7 @@ curl https://circleci.com/api/v1.1/project/:vcs-type/:username/:project?circle-t
 curl https://circleci.com/api/v1.1/recent-builds?limit=1&shallow=true
 ```
 
-```json
+```json5
 [ {
   "vcs_url" : "https://github.com/circleci/mongofinil",
   "build_url" : "https://circleci.com/gh/circleci/mongofinil/22",
@@ -234,7 +234,7 @@ The example to the right shows a user request for recent build information. Noti
 
 #### Sample Request Using the `Shallow` Parameter
 
-```json
+```json5
 [{
 	"committer_date": "2019-04-12T10:44:51-07:00",
 	"body": "",
@@ -294,7 +294,7 @@ The example to the right shows a user request for recent build information. Noti
 **`DELETE` Request:** Clears the cache for a project.
 
 ```sh
-curl -X DELETE https://circleci.com/api/v1.1/project/:vcs-type/:username/:project/build-cache?circle-token=:token
+curl -X DELETE https://circleci.com/api/v1.1/project/:vcs-type/:username/:project/build-cache -H "Circle-Token: <circle-token>"
 ```
 
 ```json
