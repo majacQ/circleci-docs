@@ -37,7 +37,7 @@ CircleCI believes in *configuration as code*. Your entire continuous integration
 └── all-other-project-files-and-folders
 ```
 
-`config.yml` is a powerful YAML file that defines the entire pipeline for your project. For a full overview of the various keys that are used, see the [Configuration Reference]({{ site.baseurl }}/2.0/configuration-reference/). 
+`config.yml` is a powerful YAML file that defines the entire pipeline for your project. For a full overview of the various keys that are used, see the [Configuration Reference]({{ site.baseurl }}/2.0/configuration-reference/) page for more information. 
 
 Your CircleCI configuration can be adapted to fit many different needs of your project. The following terms, sorted in order of granularity and dependence, describe the components of most common CircleCI projects:
 
@@ -50,7 +50,7 @@ The following image uses an [example Java application](https://github.com/Circle
 
 ![configuration elements]({{ site.baseurl }}/assets/img/docs/config-elements.png)
 
-## User Types
+## User types
   
 It is worth taking a minute to define the various user types that relate to CircleCI projects, most of which have permissions inherited from VCS accounts.
 
@@ -76,7 +76,7 @@ Pipelines represent methods for interacting with your configuration:
 
 ## Orbs
 
-Orbs are reusable snippets of code that help automate repeated processes, speed up project setup, and make it easy to integrate with third-party tools. See [Using Orbs]({{ site.baseurl }}/2.0/using-orbs/) for details about how to use orbs in your config and an introduction to orb design. Visit the [Orbs Registry](https://circleci.com/orbs/registry/) to search for orbs to help simplify your config. Orbs are not currently available for CircleCI Server.
+Orbs are reusable snippets of code that help automate repeated processes, speed up project setup, and make it easy to integrate with third-party tools. See [Using Orbs]({{ site.baseurl }}/2.0/using-orbs/) for details about how to use orbs in your config and an introduction to orb design. Visit the [Orbs Registry](https://circleci.com/developer/orbs) to search for orbs to help simplify your config. Orbs are not currently available for CircleCI Server.
 
 The graphic above illustrating an example Java configuration can be greatly simplified using orbs. The following illustration re-creates the same configuration with [the Maven orb](https://github.com/CircleCI-Public/circleci-demo-java-spring/tree/2.1-orbs-config).
 
@@ -88,7 +88,7 @@ Jobs are the building blocks of your config. Jobs are collections of [steps](#st
 
 ![job illustration]( {{ site.baseurl }}/assets/img/docs/job.png)
 
-## Executors and Images
+## Executors and images
 
 Each separate job defined within your config will run in a unique executor. An executor can be a docker container or a virtual machine running Linux, Windows, or MacOS. Note, macOS is not currently available on self-hosted installations of CircleCI Server.
 
@@ -104,7 +104,13 @@ jobs:
  build1: # job name
    docker: # Specifies the primary container image,
      - image: buildpack-deps:trusty
+       auth:
+         username: mydockerhub-user
+         password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
      - image: postgres:9.4.1 # Specifies the database image
+       auth:
+         username: mydockerhub-user
+         password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       # for the secondary or service container run in a common
       # network where ports exposed on the primary container are
       # available on localhost.
@@ -115,10 +121,10 @@ jobs:
 #...
  build2:
    machine: # Specifies a machine image that uses
-   # an Ubuntu version 14.04 image with Docker 17.06.1-ce
-   # and docker-compose 1.14.0, follow CircleCI Discuss Announcements
+   # an Ubuntu version 20.04 image with Docker 19.03.13
+   # and docker-compose 1.27.4, follow CircleCI Discuss Announcements
    # for new image releases.
-     image: ubuntu-1604:201903-01
+     image: ubuntu-2004:202010-01
 #...       
  build3:
    macos: # Specifies a macOS virtual machine with Xcode version 11.3
@@ -134,7 +140,13 @@ jobs:
  build1: # job name
    docker: # Specifies the primary container image,
      - image: buildpack-deps:trusty
+       auth:
+         username: mydockerhub-user
+         password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
      - image: postgres:9.4.1 # Specifies the database image
+       auth:
+         username: mydockerhub-user
+         password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       # for the secondary or service container run in a common
       # network where ports exposed on the primary container are
       # available on localhost.
@@ -156,8 +168,6 @@ jobs:
 # ...          
 ```
 
-
-
 The Primary Container is defined by the first image listed in [`.circleci/config.yml`]({{ site.baseurl }}/2.0/configuration-reference/) file. This is where commands are executed. The Docker executor spins up a container with a Docker image. The machine executor spins up a complete Ubuntu virtual machine image. See [Choosing an Executor Type]({{ site.baseurl }}/2.0/executor-types/) document for a comparison table and considerations. Subsequent images can be added to spin up Secondary/Service Containers.
 
 When using the docker executor and running docker commands, the `setup_remote_docker` key can be used to spin up another docker container in which to run these commands, for added security. For more information see the [Running Docker Commands]({{ site.baseurl }}/2.0/building-docker-images/#accessing-the-remote-docker-environment) guide.
@@ -172,6 +182,9 @@ jobs:
   build:
     docker:
       - image: <image-name-tag>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout # Special step to checkout your source code
       - run: # Run step to execute commands, see
@@ -181,7 +194,49 @@ jobs:
           # non-login shell with /bin/bash -eo pipefail option
           # by default.
 #...          
-```
+```          
+
+## Image
+
+An image is a packaged system that has instructions for creating a running container. 
+The Primary Container is defined by the first image listed in a [`.circleci/config.yml`]({{ site.baseurl }}/2.0/configuration-reference/) file. This is where commands are executed for jobs using the Docker or machine executor. The Docker executor spins up a container with a Docker image. The machine executor spins up a complete Ubuntu virtual machine image. See the [Choosing an Executor Type]({{ site.baseurl }}/2.0/executor-types/) document for a comparison table and considerations.
+
+ ```yaml
+ version: 2
+ jobs:
+   build1: # job name
+     docker: # Specifies the primary container image,
+     # see circleci.com/docs/2.0/circleci-images/ for
+     # the list of pre-built CircleCI images on dockerhub.
+       - image: buildpack-deps:trusty
+         auth:
+           username: mydockerhub-user
+           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+
+       - image: postgres:9.4.1 # Specifies the database image
+         auth:
+           username: mydockerhub-user
+           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+        # for the secondary or service container run in a common
+        # network where ports exposed on the primary container are
+        # available on localhost.
+         environment: # Specifies the POSTGRES_USER authentication
+          # environment variable, see circleci.com/docs/2.0/env-vars/
+          # for instructions about using environment variables.
+           POSTGRES_USER: root
+...
+   build2:
+     machine: # Specifies a machine image that uses
+     # an Ubuntu version 16.04 image
+     # follow CircleCI Discuss Announcements
+     # for new image releases.
+       image: ubuntu-1604:202007-01
+...       
+   build3:
+     macos: # Specifies a macOS virtual machine with Xcode version 9.0
+       xcode: "9.0"       
+ ...          
+ ```
 
 ## Workflows
 
@@ -204,7 +259,13 @@ jobs:
   build1:
     docker:
       - image: circleci/ruby:2.4-node
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       - image: circleci/postgres:9.4.12-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - save_cache: # Caches dependencies with a cache key
@@ -215,7 +276,13 @@ jobs:
   build2:
     docker:
       - image: circleci/ruby:2.4-node
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       - image: circleci/postgres:9.4.12-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - restore_cache: # Restores the cached dependency.
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
@@ -225,7 +292,13 @@ jobs:
   build3:
     docker:
       - image: circleci/ruby:2.4-node
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       - image: circleci/postgres:9.4.12-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - restore_cache: # Restores the cached dependency.
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
@@ -257,7 +330,13 @@ jobs:
   build1:
     docker:
       - image: circleci/ruby:2.4-node
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       - image: circleci/postgres:9.4.12-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - save_cache: # Caches dependencies with a cache key
@@ -268,7 +347,13 @@ jobs:
   build2:
     docker:
       - image: circleci/ruby:2.4-node
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       - image: circleci/postgres:9.4.12-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - restore_cache: # Restores the cached dependency.
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
@@ -278,7 +363,13 @@ jobs:
   build3:
     docker:
       - image: circleci/ruby:2.4-node
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       - image: circleci/postgres:9.4.12-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - restore_cache: # Restores the cached dependency.
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
@@ -302,12 +393,13 @@ workflows:
 ```
 {% endraw %}
 
-## Caches, Workspaces and Artifacts
+## Caches, workspaces and artifacts
 
 ![workflow illustration]( {{ site.baseurl }}/assets/img/docs/workspaces.png)
 
-A cache stores a file or directory of files such as dependencies or source code in object storage.
-Each job may contain special steps for caching dependencies from previous jobs to speed up the build.
+A cache stores a file or directory of files such as dependencies or source code in object storage. Each job may contain special steps for caching dependencies from previous jobs to speed up the build.
+
+If there comes a time when you need to [clear your cache](https://circleci.com/docs/2.0/caching/#clearing-cache), refer to the [Caching Dependencies](https://circleci.com/docs/2.0/caching/) page for more information on caching.
 
 {:.tab.cache.Cloud}
 {% raw %}
@@ -321,7 +413,13 @@ jobs:
     # circleci.com/docs/2.0/executor-types/ for a comparison
     # and more examples.
       - image: circleci/ruby:2.4-node
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       - image: circleci/postgres:9.4.12-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - save_cache: # Caches dependencies with a cache key
@@ -334,7 +432,13 @@ jobs:
   build2:
     docker:
       - image: circleci/ruby:2.4-node
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       - image: circleci/postgres:9.4.12-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - restore_cache: # Restores the cached dependency.
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}       
@@ -353,7 +457,13 @@ jobs:
     # circleci.com/docs/2.0/executor-types/ for a comparison
     # and more examples.
       - image: circleci/ruby:2.4-node
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       - image: circleci/postgres:9.4.12-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - save_cache: # Caches dependencies with a cache key
@@ -366,7 +476,13 @@ jobs:
   build2:
     docker:
       - image: circleci/ruby:2.4-node
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       - image: circleci/postgres:9.4.12-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - restore_cache: # Restores the cached dependency.
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}       
@@ -456,7 +572,7 @@ Caches     | Months               | Store non-vital data that may help the job r
 
 Refer to the [Persisting Data in Workflows: When to Use Caching, Artifacts, and Workspaces](https://circleci.com/blog/persisting-data-in-workflows-when-to-use-caching-artifacts-and-workspaces/) for additional conceptual information about using workspaces, caching, and artifacts.
 
-## See Also
+## See also
 {:.no_toc}
 
 Refer to the [Jobs and Steps]({{ site.baseurl }}/2.0/jobs-steps/) document for a summary of how to use the `jobs` and `steps` keys and options.

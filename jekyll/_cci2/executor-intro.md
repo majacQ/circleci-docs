@@ -35,7 +35,7 @@ Find out more about using the `docker` executor [here]({{ site.baseurl }}/2.0/ex
 jobs:
   build: # name of your job
     machine: # executor type
-      image: ubuntu-1604:201903-01 # # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      image: ubuntu-2004:202010-01 # # recommended linux image - includes Ubuntu 20.04, docker 19.03.13, docker-compose 1.27.4
 
       steps:
         # Commands run in a Linux virtual machine environment
@@ -44,11 +44,11 @@ jobs:
 {:.tab.machine.Server}
 ```
 jobs:
-  build: # name of your job
-    machine: true # executor type
-
-      steps:
-        # Commands run in a Linux virtual machine environment
+  build: 
+    machine: 
+      image: ubuntu-1604:202007-01 # VM will run Ubuntu 16.04 for this release date
+    steps:
+      # Commands run in a Linux virtual machine environment
 ```
 
 Find out more about using the `machine` executor [here]({{ site.baseurl }}/2.0/executor-types/#using-machine).
@@ -109,9 +109,9 @@ jobs:
       - run: Write-Host 'Hello, Windows'
 ```
 
-Find out more about using the `windows` executor [here]({{ site.baseurl }}/2.0/executor-types/#using-the-windows-executor). See [the Windows orb details](https://circleci.com/orbs/registry/orb/circleci/windows) for the list of options available in the Windows orb.
+Find out more about using the `windows` executor [here]({{ site.baseurl }}/2.0/executor-types/#using-the-windows-executor). See [the Windows orb details](https://circleci.com/developer/orbs/orb/circleci/windows) for the list of options available in the Windows orb.
 
-## See Also
+## See also
 
 * [Pre-built CircleCI convenience images]({{ site.baseurl }}/2.0/circleci-images/).
 * [Building on MacOS]({{site.baseurl}}/2.0/hello-world-macos).

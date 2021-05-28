@@ -7,18 +7,18 @@ version:
 - Server v2.x
 ---
 
-This document presents example config for a variety of popular deployment targets. Many of the examples use orbs. CircleCI and partners have developed a catalogue of orbs that enable you to quickly deploy applications with minimal config. Details of all orbs can be found in the [CircleCI Orbs Registry](https://circleci.com/orbs/registry/).
+This document presents example config for a variety of popular deployment targets. Many of the examples use orbs. CircleCI and partners have developed a catalogue of orbs that enable you to quickly deploy applications with minimal config. Details of all orbs can be found in the [CircleCI Orbs Registry](https://circleci.com/developer/orbs).
 
 * TOC
 {:toc}
 
-#### Notes on Examples
+#### Notes on examples
 {:.no_toc}
 
 * In order to use orbs you must use `version 2.1` config.
 * We have indicated where you need to specify a [docker image for your job]({{ site.baseurl }}/2.0/optimizations/#docker-image-choice) with `<docker-image-name-tag>`.
-* If you wish to remain using `version 2.0` config, or are using a self-hosted installation of CircleCI Server, the examples shown here are still relevant because you can view the expanded orb source within the [Orbs Registry](https://circleci.com/orbs/registry/) to see how the jobs are built.
-* In the examples on this page that use orbs, you will notice that the orbs are versioned with tags, for example, `aws-s3: circleci/aws-s3@x.y.z`. If you copy paste any examples you will need to edit `x.y.z` to specify a version. You can find the available versions listed on the individual orb pages in the [CircleCI Orbs Registry](https://circleci.com/orbs/registry/).
+* If you wish to remain using `version 2.0` config, or are using a self-hosted installation of CircleCI Server, the examples shown here are still relevant because you can view the expanded orb source within the [Orbs Registry](https://circleci.com/developer/orbs) to see how the jobs are built.
+* In the examples on this page that use orbs, you will notice that the orbs are versioned with tags, for example, `aws-s3: circleci/aws-s3@x.y.z`. If you copy paste any examples you will need to edit `x.y.z` to specify a version. You can find the available versions listed on the individual orb pages in the [CircleCI Orbs Registry](https://circleci.com/developer/orbs).
 * Any items in these examples that appear within `< >` should be replaced with your own parameters.
 
 ## AWS
@@ -26,17 +26,17 @@ This document presents example config for a variety of popular deployment target
 This section covers deployment to S3, ECR/ECS (Elastic Container Registry/Elastic Container Service), as well as application deployment using AWS Code Deploy.
 
 For more detailed information about the AWS S3, ECS, ECR, and CodeDeploy orbs, refer to the following Orb registry pages:
-- [AWS S3](https://circleci.com/orbs/registry/orb/circleci/aws-s3)
-- [AWS ECR](https://circleci.com/orbs/registry/orb/circleci/aws-ecr)
-- [AWS ECS](https://circleci.com/orbs/registry/orb/circleci/aws-ecs)
-- [AWS CodeDeploy](https://circleci.com/orbs/registry/orb/circleci/aws-code-deploy)
+- [AWS S3](https://circleci.com/developer/orbs/orb/circleci/aws-s3)
+- [AWS ECR](https://circleci.com/developer/orbs/orb/circleci/aws-ecr)
+- [AWS ECS](https://circleci.com/developer/orbs/orb/circleci/aws-ecs)
+- [AWS CodeDeploy](https://circleci.com/developer/orbs/orb/circleci/aws-code-deploy)
 
 ### Deploy to S3
 {:.no_toc}
 #### Using the AWS S3 Orb
 {:.no_toc}
 
-For detailed information about the AWS S3 orb, refer to the [CircleCI AWS S3 Orb Reference](https://circleci.com/orbs/registry/orb/circleci/aws-s3) page. This section details the use of the AWS S3 orb and `version: 2.1` config for simple deployment, below we will look at the same example without orbs and using using `version: 2` config.
+For detailed information about the AWS S3 orb, refer to the [CircleCI AWS S3 Orb Reference](https://circleci.com/developer/orbs/orb/circleci/aws-s3) page. This section details the use of the AWS S3 orb and `version: 2.1` config for simple deployment, below we will look at the same example without orbs and using using `version: 2` config.
 
 1. For security best practice, create a new [IAM user](https://aws.amazon.com/iam/details/manage-users/) specifically for CircleCI.
 
@@ -67,10 +67,16 @@ For detailed information about the AWS S3 orb, refer to the [CircleCI AWS S3 Orb
       build:
         docker: # Use the Docker executor for the build job
           - image: <image-name-and-tag> # Specify the Docker image to use for the build job
+            auth:
+              username: mydockerhub-user
+              password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       ... # build job steps omitted for brevity
       deploy:
         docker: # Use the Docker executor for the deploy job
           - image: <image-name-and-tag>  # Specify the Docker image to use for the deploy job
+            auth:
+              username: mydockerhub-user
+              password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       steps:
           - checkout
           - aws-s3/sync:
@@ -83,7 +89,7 @@ For detailed information about the AWS S3 orb, refer to the [CircleCI AWS S3 Orb
     ```
     {% endraw %}
 
-#### Deploy to AWS S3 with 2.0 Config
+#### Deploy to AWS S3 with 2.0 config
 {:.no_toc}
 
 1. For security best practice, create a new [IAM user](https://aws.amazon.com/iam/details/manage-users/) specifically for CircleCI.
@@ -116,10 +122,16 @@ For detailed information about the AWS S3 orb, refer to the [CircleCI AWS S3 Orb
       build:
         docker: # Specify executor for running build job - this example uses a Docker container
           - image: <docker-image-name-tag> # Specify docker image to use
+            auth:
+              username: mydockerhub-user
+              password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       ... # build job steps omitted for brevity
       deploy:
         docker: # Specify executor for running deploy job
           - image: <docker-image-name-tag> # Specify docker image to use
+            auth:
+              username: mydockerhub-user
+              password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         steps:
           - run: # Install the AWS CLI if it is not already included in the docker image
               name: Install awscli 
@@ -132,9 +144,9 @@ For detailed information about the AWS S3 orb, refer to the [CircleCI AWS S3 Orb
 
 For a complete list of AWS CLI commands and options, see the [AWS CLI Command Reference](https://docs.aws.amazon.com/cli/latest/reference/).
 
-### Deploy Docker Image to AWS ECR
+### Deploy Docker image to AWS ECR
 {:.no_toc}
-The AWS ECR orb enables you to log into AWS, build, and then push a Docker image to AWS Elastic Container Registry with minimal config. See the [orb registry page](https://circleci.com/orbs/registry/orb/circleci/aws-ecr) for a full list of parameters, jobs, commands and options.
+The AWS ECR orb enables you to log into AWS, build, and then push a Docker image to AWS Elastic Container Registry with minimal config. See the [orb registry page](https://circleci.com/developer/orbs/orb/circleci/aws-ecr) for a full list of parameters, jobs, commands and options.
 
 Using the `build-and-push-image` job, as shown below requires the following env vars to be set: `AWS_ECR_ACCOUNT_URL`, `ACCESS_KEY_ID`, `SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`. {% include snippets/env-var-or-context.md %}
 
@@ -159,10 +171,10 @@ workflows:
 
 {% endraw %}
 
-### Update an AWS ECS Instance
+### Update an AWS ECS instance
 {:.no_toc}
 
-Use the [AWS ECR](https://circleci.com/orbs/registry/orb/circleci/aws-ecr) and [ECS](https://circleci.com/orbs/registry/orb/circleci/aws-ecs) orbs to easily update an existing AWS ECS instance.
+Use the [AWS ECR](https://circleci.com/developer/orbs/orb/circleci/aws-ecr) and [ECS](https://circleci.com/developer/orbs/orb/circleci/aws-ecs) orbs to easily update an existing AWS ECS instance.
 
 Using the `build-and-push-image` job, as shown below requires the following env vars to be set: `AWS_ECR_ACCOUNT_URL`, `ACCESS_KEY_ID`, `SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`. {% include snippets/env-var-or-context.md %}
 
@@ -197,7 +209,7 @@ workflows:
 ### AWS CodeDeploy
 {:.no_toc}
 
-The [AWS CodeDeploy](https://circleci.com/orbs/registry/orb/circleci/aws-code-deploy) orb enables you to run deployments through AWS CodeDeploy.
+The [AWS CodeDeploy](https://circleci.com/developer/orbs/orb/circleci/aws-code-deploy) orb enables you to run deployments through AWS CodeDeploy.
 
 {% raw %}
 
@@ -220,11 +232,11 @@ workflows:
 
 {% endraw %}
 
-## Azure Container Registry
+## Azure container registry
 
 This section describes a simple deployment to the Azure container registry (ACR) using the CircleCI ACR orb and `version 2.1` configuration.
 
-For detailed information about the Azure ACR orb, including all options, refer to the [CircleCI ACR Orb Reference](https://circleci.com/orbs/registry/orb/circleci/azure-acr) page.
+For detailed information about the Azure ACR orb, including all options, refer to the [CircleCI ACR Orb Reference](https://circleci.com/developer/orbs/orb/circleci/azure-acr) page.
 
 1. Whether your require a user or service principal login, you will need to provide environment variables for username, password and tennent to CircleCI. For user logins use env var names as follows: `AZURE_USERNAME`, `AZURE_PASSWORD` and `AZURE_TENANT`. For service principal logins use: `AZURE_SP`, `AZURE_SP_PASSWORD` and `AZURE_SP_TENANT`. {% include snippets/env-var-or-context.md %}
 
@@ -282,6 +294,9 @@ jobs:
   deploy-job:
     docker:
       - image: <docker-image-name-tag>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     working_directory: ~/repo
     steps:
       - checkout
@@ -297,7 +312,7 @@ jobs:
 
 ## Cloud Foundry
 
-CircleCI has developed a CloudFoundry Orb that you can use to simplify your configuration workflows. The Cloud Foundry page in the [Orbs Registry](https://circleci.com/orbs/registry/orb/circleci/cloudfoundry) contains several different examples of how you can perform tasks with CloudFoundry, including the example below that shows how you can build and run blue green deployment in a single job - in this example `domain` will automatically be prefixed with `dark` and `live` for two subdomains to be specified. Validation steps would also need to be provided to allow the live deployment to go ahead.
+CircleCI has developed a CloudFoundry Orb that you can use to simplify your configuration workflows. The Cloud Foundry page in the [Orbs Registry](https://circleci.com/developer/orbs/orb/circleci/cloudfoundry) contains several different examples of how you can perform tasks with CloudFoundry, including the example below that shows how you can build and run blue green deployment in a single job - in this example `domain` will automatically be prefixed with `dark` and `live` for two subdomains to be specified. Validation steps would also need to be provided to allow the live deployment to go ahead.
 
 {% raw %}
 
@@ -329,9 +344,9 @@ workflows:
 
 {% endraw %}
 
-If you would like more detailed information about various CloudFoundry orb elements that you can use in your configuration workflows, refer to the [CloudFoundry Orb](https://circleci.com/orbs/registry/orb/circleci/cloudfoundry) page in the [CircleCI Orbs Registry](https://circleci.com/orbs/registry/).
+If you would like more detailed information about various CloudFoundry orb elements that you can use in your configuration workflows, refer to the [CloudFoundry Orb](https://circleci.com/developer/orbs/orb/circleci/cloudfoundry) page in the [CircleCI Orbs Registry](https://circleci.com/developer/orbs).
 
-### Deploy to Cloud Foundry with 2.0 Config
+### Deploy to Cloud Foundry with 2.0 config
 {:.no_toc}
 
 Cloud Foundry deployments require the Cloud Foundry CLI. Be sure to match the architecture to your Docker image (the commands below assume you are using a Debian-based image). This example pattern implements "Blue-Green" deployments using Cloud Foundry's map-route/unmap-route commands, which is an optional feature above and beyond a basic `cf push`.
@@ -351,7 +366,7 @@ Cloud Foundry deployments require the Cloud Foundry CLI. Be sure to match the ar
             cf target -o "$CF_ORG" -s "$CF_SPACE"
 ```
 
-#### Dark Deployment
+#### Dark deployment
 {:.no_toc}
 
 This is the first step in a [Blue-Green](https://docs.cloudfoundry.org/devguide/deploy-apps/blue-green.html) deployment, pushing the application to non-production routes.
@@ -378,7 +393,7 @@ This is the first step in a [Blue-Green](https://docs.cloudfoundry.org/devguide/
 
 {% endraw %}
 
-#### Live Deployment
+#### Live deployment
 {:.no_toc}
 
 Until now, the previously pushed "app-name" has not changed.  The final step is to route the production URL to our dark application, stop traffic to the previous version, and rename the applications.
@@ -399,7 +414,7 @@ Until now, the previously pushed "app-name" has not changed.  The final step is 
             cf rename app-name-dark app-name
 ```
 
-#### Manual Approval
+#### Manual approval
 {:.no_toc}
 
 For additional control or validation, you can add a manual "hold" step between the dark and live steps as shown in the sample workflow below.
@@ -461,6 +476,9 @@ The following example shows how you can add a deploy to Firebase job to your pro
   deploy-job:
     docker:
       - image: <docker-image-name-tag>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     working_directory: /tmp/my-project
     steps:
       - run:
@@ -497,10 +515,10 @@ If using Google Cloud Functions with Firebase, instruct CircleCI to navigate to 
 
 Before deploying to Google Cloud Platform, you will need to authorize the Google Cloud SDK and set default configuration settings. Refer to the [Authorizing the Google Cloud SDK]({{ site.baseurl }}/2.0/google-auth/) document for full details.
 
-### Using Google Cloud Orbs
+### Using Google Cloud orbs
 {:.no_toc}
 
-There are several Google Cloud orbs available in the [CircleCI Orbs Registry](https://circleci.com/orbs/registry/) that you can use to simplify your deployments. For example, the [Google Kubernetes Engine (GKE) orb](https://circleci.com/orbs/registry/orb/circleci/gcp-gke#usage-publish-and-rollout-image) has a pre-built job to build and publish a Docker image, and roll the image out to a GKE cluster, as follows:
+There are several Google Cloud orbs available in the [CircleCI Orbs Registry](https://circleci.com/developer/orbs) that you can use to simplify your deployments. For example, the [Google Kubernetes Engine (GKE) orb](https://circleci.com/developer/orbs/orb/circleci/gcp-gke#usage-publish-and-rollout-image) has a pre-built job to build and publish a Docker image, and roll the image out to a GKE cluster, as follows:
 
 {% raw %}
 
@@ -523,7 +541,7 @@ workflows:
 
 {% endraw %}
 
-### Deployment to GKE with 2.0 Config
+### Deployment to GKE with 2.0 config
 {:.no_toc}
 
 In the following example, if the `build-job` passes and the current branch is `master`, CircleCI runs the deployment job.
@@ -538,7 +556,10 @@ jobs:
   deploy-job:
     docker:
       - image: <docker-image-name-tag>
-    working_directory: /tmp/my-project  
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+    working_directory: /tmp/my-project
     steps:
       - run:
           name: Deploy Master to GKE
@@ -573,14 +594,14 @@ For another example, see our [CircleCI Google Cloud deployment example project](
 [Heroku](https://www.heroku.com/) is a popular platform for hosting applications in the cloud. To configure CircleCI
 to deploy your application to Heroku, follow the steps below.
 
-### Deploy with the Heroku Orb
+### Deploy with the Heroku orb
 {:.no_toc}
 1. Create a Heroku account and follow the [Getting Started on Heroku](https://devcenter.heroku.com/start) documentation
 to set up a project in your chosen language.
 
 2. Add the name of your Heroku application and your Heroku API key as environment variables as `HEROKU_APP_NAME` and `HEROKU_API_KEY`, respectively. {% include snippets/env-var-or-context.md %}
 
-3. Use the [Heroku orb](https://circleci.com/orbs/registry/orb/circleci/heroku) to keep your config simple. The `deploy-via-git` installs the Heroku CLI in the primary container, runs any pre deployment steps you define, deploys your application, then runs any post-deployment steps you define. See the Heroku orb page in the [orbs registry](https://circleci.com/orbs/registry/orb/circleci/heroku) for full details of parameters and options:
+3. Use the [Heroku orb](https://circleci.com/developer/orbs/orb/circleci/heroku) to keep your config simple. The `deploy-via-git` installs the Heroku CLI in the primary container, runs any pre deployment steps you define, deploys your application, then runs any post-deployment steps you define. See the Heroku orb page in the [orbs registry](https://circleci.com/developer/orbs/orb/circleci/heroku) for full details of parameters and options:
 
     {% raw %}
     
@@ -604,9 +625,9 @@ to set up a project in your chosen language.
 
     {% endraw %}
 
-For more detailed information about these Heroku orbs, refer to the [CircleCI Heroku Orb](https://circleci.com/orbs/registry/orb/circleci/heroku).
+For more detailed information about these Heroku orbs, refer to the [CircleCI Heroku Orb](https://circleci.com/developer/orbs/orb/circleci/heroku).
 
-### Heroku Deployment with 2.0 Config
+### Heroku deployment with 2.0 config
 {:.no_toc}
 
 1. Create a Heroku account and follow the [Getting Started on Heroku](https://devcenter.heroku.com/start) documentation
@@ -629,6 +650,9 @@ to set up a project in your chosen language.
       deploy:
         docker:
           - image: <docker-image-name-tag>
+            auth:
+              username: mydockerhub-user
+              password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         steps:
           - checkout
           - run:
@@ -680,6 +704,9 @@ Setting up CircleCI to publish packages to the npm registry makes it easy for pr
       publish:
         docker:
           - image: <docker-image-name-tag>
+            auth:
+              username: mydockerhub-user
+              password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         steps:
           - checkout
           - run:

@@ -165,7 +165,7 @@ jobs:
 
 ```
 
-# Example Application
+# Example application
 
 Let’s consider a more advanced (but still introductory) "hello world" application using the Windows executor. This [example application](https://github.com/CircleCI-Public/circleci-demo-windows) still prints "Hello World" to the console, but does so using .NET core to create an executable, uses dependency caching, and creates an artifact on every build.
 
@@ -182,7 +182,7 @@ orbs:
   win: circleci/windows@2.2.0
 ```
 
-Next, we declare orbs that we will be using in our build. We will only use the [windows orb](https://circleci.com/orbs/registry/orb/circleci/windows) to help us get started.
+Next, we declare orbs that we will be using in our build. We will only use the [windows orb](https://circleci.com/developer/orbs/orb/circleci/windows) to help us get started.
 
 ```yaml
 jobs:
@@ -232,7 +232,7 @@ Next, we run two steps: one to build the executable for Windows 10, and another 
 
 In our last step, we store the build executable as an artifact, making it accessible with the CircleCI web application or API.
 
-# SSH Into Your Build
+# SSH into your build
 
 It is possible to SSH into a Windows build container. This is useful for troubleshooting problems in your pipeline. Follow these steps to SSH into a Windows container:
 
@@ -256,7 +256,7 @@ The available options are:
 
 You can read more about using SSH in your builds [here]({{site.baseurl}}/2.0/ssh-access-jobs).
 
-# Next Steps
+# Next steps
 
 Also, consider reading documentation on some of CircleCI’s features:
 
@@ -270,7 +270,7 @@ Also, consider reading documentation on some of CircleCI’s features:
 
 * Windows Server 2019 Core Datacenter Edition
 * Visual Studio 2019 Community Edition
-    * Additional licensing terms may apply to your organisation when using this version of Visual Studio on CircleCI. Please review the [Visual Studio 2019 Community Edition licensing terms](https://visualstudio.microsoft.com/vs/community/#usage) before using this Visual Studio version in your Windows jobs.
+    * Additional licensing terms may apply to your organisation when using this version of Visual Studio on CircleCI. Please review the [Visual Studio 2019 Community Edition licensing terms](https://visualstudio.microsoft.com/license-terms/mlt031819/) before using this Visual Studio version in your Windows jobs.
     * Azure SDK for Visual Studio 2019
     * Visual Studio 2019 Build Tools
 * Shells:
@@ -279,6 +279,7 @@ Also, consider reading documentation on some of CircleCI’s features:
     * cmd
 * .NET Framework 4.8
 * .NET Core
+    * SDK 3.1.406 (x64)
     * SDK 3.0.100-preview7-012821
     * Runtime 3.0.0-preview6-27804-01
     * SDK 2.2.401 

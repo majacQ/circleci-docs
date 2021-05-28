@@ -3,8 +3,6 @@ layout: classic-docs
 title: "CircleCI を設定する"
 short-title: "CircleCI を設定する"
 description: ".circleci/config.yml に関するリファレンス"
-categories:
-  - configuring-jobs
 order: 20
 ---
 
@@ -1365,8 +1363,8 @@ branches では `only` キーと `ignore` キーを使用でき、どちらに�
 {: class="table table-striped"}
 
 ###### **`branches`**
-
 {:.no_toc}
+
  Branches では、`only` キーと `ignore` キーを使用でき、どちらにもブランチ名を指す 1 つの文字列をマップさせます。 スラッシュで囲むことで正規表現でブランチに一致させたり、そのような文字列のリストでマップさせたりできます。 正規表現は、文字列**全体**に一致する必要があります。
 
 - `only` を指定した場合、一致するブランチでジョブが実行されます。

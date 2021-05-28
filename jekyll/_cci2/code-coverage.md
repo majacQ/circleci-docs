@@ -67,9 +67,15 @@ jobs:
   build:
     docker:
       - image: circleci/ruby:2.5.3-node-browsers
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         environment:
           RAILS_ENV: test
       - image: circleci/postgres:9.5-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         environment:
           POSTGRES_USER: circleci-demo-ruby
           POSTGRES_DB: rails_blog
@@ -131,6 +137,9 @@ jobs:
   build:
     docker:
     - image: circleci/python:3.7-node-browsers-legacy
+      auth:
+        username: mydockerhub-user
+        password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
     - checkout
     - run:
@@ -247,6 +256,9 @@ jobs:
   build:
     docker:
       - image: circleci/openjdk:11.0-stretch-node-browsers-legacy
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run : mvn test
@@ -266,6 +278,9 @@ jobs:
   build:
     docker:
       - image: circleci/node:10.0-browsers
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: npm install
@@ -293,6 +308,9 @@ jobs:
   build:
     docker:
       - image: circleci/php:7-fpm-browsers-legacy
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run:
@@ -321,6 +339,9 @@ jobs:
   build:
     docker:
       - image: circleci/golang:1.11
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: go build
@@ -338,7 +359,7 @@ jobs:
 ```
 
 
-# Using a Code Coverage Service
+# Using a code coverage service
 
 ## Codecov
 
@@ -360,7 +381,7 @@ Read more about Codecov's orb in their [guest blog post](https://circleci.com/bl
 ## Coveralls
 
 If you're a Coveralls customer, follow
-[their guide to set up your coverage stats.](https://coveralls.io/docs)
+[their guide to set up your coverage stats.](https://docs.coveralls.io/)
 You'll need to add `COVERALLS_REPO_TOKEN` to your CircleCI
 [environment variables]( {{ site.baseurl }}/1.0/environment-variables/).
 

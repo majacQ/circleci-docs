@@ -16,7 +16,7 @@ installed in a Docker image. If you’re in a rush, just copy the sample configu
 * TOC
 {:toc}
 
-## Quickstart: Demo Go Reference Project
+## Quickstart: Demo Go reference project
 
 We maintain a reference Go project to show how to build on CircleCI 2.0:
 
@@ -26,7 +26,7 @@ We maintain a reference Go project to show how to build on CircleCI 2.0:
 In the project you will find a commented CircleCI configuration file <a href="https://github.com/CircleCI-Public/circleci-demo-go/blob/master/.circleci/config.yml" target="_blank">`.circleci/config.yml`</a>. This file shows best practice for using CircleCI 2.0 with Go projects.
 
 
-## Sample Configuration
+## Sample configuration
 
 {% raw %}
 
@@ -37,8 +37,14 @@ jobs: # basic units of work in a run
     docker: # run the steps with Docker
       # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
       - image: circleci/golang:1.12
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       # CircleCI PostgreSQL images available at: https://hub.docker.com/r/circleci/postgres/
       - image: circleci/postgres:9.6-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         environment: # environment variables for primary container
           POSTGRES_USER: circleci-demo-go
           POSTGRES_DB: circle_test
@@ -108,12 +114,12 @@ workflows:
 
 {% endraw %}
 
-### Pre-Built CircleCI Docker Images
+### Pre-built CircleCI Docker images
 {:.no_toc}
 
 We recommend using a CircleCI pre-built image that comes pre-installed with tools that are useful in a CI environment. You can select the version you need from Docker Hub: <https://hub.docker.com/r/circleci/golang/>. The demo project uses an official CircleCI image.
 
-### Build the Demo Project Yourself
+### Build the demo project yourself
 {:.no_toc}
 
 A good way to start using CircleCI is to build a project yourself. Here's how to build the <a href="https://github.com/CircleCI-Public/circleci-demo-go" target="_blank">Demo Go Project</a> with your own account:
@@ -126,7 +132,7 @@ If you want to test your changes locally, use [our CLI tool](https://circleci.co
 
 ---
 
-## Config Walkthrough
+## Config walkthrough
 
 This section explains the commands in `.circleci/config.yml`
 
@@ -146,8 +152,14 @@ jobs: # basic units of work in a run
     docker: # run the steps with Docker
       # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
       - image: circleci/golang:1.12
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       # CircleCI PostgreSQL images available at: https://hub.docker.com/r/circleci/postgres/
       - image: circleci/postgres:9.6-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         environment: # environment variables for primary container
           POSTGRES_USER: circleci-demo-go
           POSTGRES_DB: circle_test
@@ -279,7 +291,7 @@ workflows:
 
 Success! You just set up CircleCI 2.0 for a Go app. Check out our [Job page](https://circleci.com/gh/CircleCI-Public/circleci-demo-go){:rel="nofollow"} to see how this looks when building on CircleCI.
 
-## See Also
+## See also
 
 See the [Deploy]({{ site.baseurl }}/2.0/deployment-integrations/) document for example deploy target configurations.
 

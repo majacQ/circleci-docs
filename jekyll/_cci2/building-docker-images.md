@@ -3,7 +3,6 @@ layout: classic-docs
 title: "Running Docker Commands"
 short-title: "Running Docker Commands"
 description: "How to build Docker images and access remote services"
-categories: [configuring-jobs]
 order: 55
 version:
 - Cloud
@@ -25,7 +24,8 @@ jobs:
     steps:
       # ... steps for building/testing app ...
 
-      - setup_remote_docker
+      - setup_remote_docker:
+        version: 19.03.13
 ```
 
 When `setup_remote_docker` executes, a remote environment will be created, and your current [primary container]({{ site.baseurl }}/2.0/glossary/#primary-container) will be configured to use it. Then, any docker-related commands you use will be safely executed in this new environment.
@@ -74,12 +74,16 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.13-alpine
+      - image: circleci/golang:1.15
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       # ... steps for building/testing app ...
 
       - setup_remote_docker:
+          version: 19.03.13
           docker_layer_caching: true
 
       # build and push Docker image
@@ -90,7 +94,7 @@ jobs:
           docker push CircleCI-Public/circleci-demo-docker:$TAG
 {% endhighlight %}
 
-If the primary container you are using doesn't already have the docker CLI installed, then [you will need to install it](https://docs.docker.com/install/#supported-platforms).
+**Note:** The [CircleCI convenience images](https://circleci.com/docs/2.0/circleci-images/) for the Docker executor come with the Docker CLI pre-installed. If you are using a third-party image for your primary container that doesn't already have the Docker CLI installed, then [you will need to install it](https://docs.docker.com/install/#supported-platforms) as part of your job before calling any `docker` commands.
 
 ```
       # Install via apk on alpine based images
@@ -106,37 +110,24 @@ Let’s break down what’s happening during this build’s execution:
 3. We enable [Docker Layer Caching]({{ site.baseurl }}/2.0/glossary/#docker-layer-caching) (DLC) here to speed up image building (**note:** the option `docker_layer_caching: true` is available on [Performance and Custom plans](https://circleci.com/pricing/), not the Free plan. DLC is available on CircleCI Server installations). (line 11)
 4. We use project environment variables to store credentials for Docker Hub. (line 17)
 
-## Docker Version
+## Docker version
 
-If your job requires a specific docker version, you can set it as a `version` attribute:
+To specify the Docker version, you can set it as a `version` attribute:
 
 ```
       - setup_remote_docker:
-          version: 18.06.0-ce
+          version: 19.03.13
 ```
 
-CircleCI supports multiple versions of Docker and defaults to using `17.09.0-ce`. Following are the supported stable and edge versions:
+CircleCI supports multiple versions of Docker. The following are the available versions:
 
+- `20.10.2`
+- `19.03.14`
+- `19.03.13`
 - `19.03.12`
 - `19.03.8`
 - `18.09.3`
-- `18.06.0-ce`
-- `18.05.0-ce`
-- `18.04.0-ce`
-- `18.03.1-ce`
-- `18.03.0-ce`
-- `18.02.1-ce`
-- `18.01.0-ce`
-- `17.12.1-ce`
-- `17.12.0-ce`
-- `17.11.0-ce`
-- `17.10.0-ce`
-- `17.09.0-ce`
-- `17.07.0-ce`
-- `17.06.1-ce`
-- `17.06.0-ce`
-- `17.05.0-ce`
-- `17.03.0-ce`
+- `17.09.0-ce` (default)
 
 <!---
 Consult the [Stable releases](https://download.docker.com/linux/static/stable/x86_64/) or [Edge releases](https://download.docker.com/linux/static/edge/x86_64/) for the full list of supported versions.
@@ -144,35 +135,35 @@ Consult the [Stable releases](https://download.docker.com/linux/static/stable/x8
 
 **Note:** The `version` key is not currently supported on CircleCI Server installations. Contact your system administrator for information about the Docker version installed in your remote Docker environment.
 
-## Separation of Environments
+## Separation of environments
 The job and [remote docker]({{ site.baseurl }}/2.0/glossary/#remote-docker) run in separate environments. Therefore, Docker containers specified to run your jobs cannot directly communicate with containers running in remote docker.
 
-### Accessing Services
+### Accessing services
 {:.no_toc}
 
 It is **not** possible to start a service in remote docker and ping it directly from a primary container or to start a primary container that can ping a service in remote docker. To solve that, you’ll need to interact with a service from remote docker, as well as through the same container:
 
 ```
-#...
+# ...
       - run:
           name: "Start Service and Check That it’s Running"
           command: |
             docker run -d --name my-app my-app
             docker exec my-app curl --retry 10 --retry-connrefused http://localhost:8080
-#...
+# ...
 ```
 
 A different way to do this is to use another container running in the same network as the target container:
 
 ```
-#...
+# ...
       - run: |
           docker run -d --name my-app my-app
           docker run --network container:my-app appropriate/curl --retry 10 --retry-connrefused http://localhost:8080
-#...
+# ...
 ```
 
-### Mounting Folders
+### Mounting folders
 {:.no_toc}
 
 It is **not** possible to mount a volume from your job space into a container in Remote Docker (and vice versa). You may use the `docker cp` command to transfer files between these two environments. For example, to start a container in Remote Docker using a config file from your source code:
@@ -255,7 +246,7 @@ Then, the sample CircleCI `.circleci/config.yml` snippets below populate and bac
 ```
 {% endraw %}
 
-### Accessing the Remote Docker environment
+### Accessing the remote docker environment
 
 When a remote Docker environment is spun up, an SSH alias is created for you so you can SSH into the remote Docker virtual machine. This may be helpful for debugging your builds, or modifying the Docker or VM filesystem configuration. To SSH into the remote Docker VM, run the following within your project configuration job steps, or during a SSH rerun:
 
@@ -267,7 +258,7 @@ ssh remote-docker
 
 Thanks to ryansch for contributing this example.
 
-## See Also
+## See also
 
 [Docker Layer Caching]({{ site.baseurl }}/2.0/docker-layer-caching/)
 

@@ -2,7 +2,6 @@
 layout: classic-docs
 title: "Using Notifications"
 short-title: "Using Notifications"
-categories: [configuring-jobs]
 order: 100
 published: true
 version:
@@ -22,12 +21,18 @@ jobs:
   build:
     docker:
       - image: circleci/<language>:<version TAG>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: <command>
   test:
     docker:
       - image: circleci/<language>:<version TAG>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: <command>
@@ -42,7 +47,7 @@ workflows:
 
 Continue reading to learn how each notification type (chat, email, and web) is configurable.
 
-## Set or Change Email Notifications
+## Set or change email notifications
 
 Use the [Notifications](https://app.circleci.com/settings/user/notifications){:rel="nofollow"} page of the CircleCI application to set or change your default email address for notifications, to turn off email notifications, or get a notification email for every build.
 
@@ -52,11 +57,11 @@ Email notifications will look like the following:
 
 ![]({{ site.baseurl }}/assets/img/docs/notification-email-failure.png)
 
-## Enable Web Notifications
+## Enable web notifications
 
 Perform the following steps to enable web notifications:
 
-1. Go to your [CircleCI user settings](https://circleci.com/account/notifications){:rel="nofollow"}. Enable the toggle for "Web Notifications" at the bottom of the document.
+1. Go to your [CircleCI user settings](https://app.circleci.com/settings/user/notifications){:rel="nofollow"}. Enable the toggle for "Web Notifications" at the bottom of the document.
 
 2. Your browser will ask you to confirm that you want to allow notifications. Click `Allow`. See the screenshot below for additional details:
 
@@ -71,7 +76,7 @@ documentation for handling web notifications.
 
 ## Notifications with Orbs
 
-You can use Orbs to integrate various kinds of notifications into your configuration; currently, CircleCI offers a Slack orb and an IRC orb, but several third-party orbs also exist. Consider searching the [orb registry](https://circleci.com/orbs/registry/?query=notification&filterBy=all) for _notifications_ to see what is available.
+You can use Orbs to integrate various kinds of notifications into your configuration; currently, CircleCI offers a Slack orb and an IRC orb, but several third-party orbs also exist. Consider searching the [orb registry](https://circleci.com/developer/orbs?query=notification&filterBy=all) for _notifications_ to see what is available.
 
 ### Prerequisites
 
@@ -82,38 +87,46 @@ Before integrating an orb into your configuration, you will need to perform two 
 
 ### Using the Slack Orb
 
-Using the [CircleCI Slack Orb](https://circleci.com/orbs/registry/orb/circleci/slack), you can integrate and customize Slack notifications directly from your configuration file. The following config is an example of notifying a Slack channel with a custom message:
+Using the [CircleCI Slack orb](https://circleci.com/developer/orbs/orb/circleci/slack), you can integrate and customize Slack notifications directly from your configuration file. The following config is an example of notifying a Slack channel with a custom message:
 
 ```yaml
-version: 2.1
+version: '2.1'
+orbs:
+  slack: circleci/slack@4.0
 jobs:
-  build:
+  notify:
     docker:
-      - image: <docker image>
+      - image: 'cimg/base:stable'
     steps:
       - slack/notify:
-          color: '#42e2f4'
-          mentions: 'USERID1,USERID2,'
-          message: This is a custom message notification
-          webhook: webhook
-orbs:
-  slack: circleci/slack@x.y.z
-version: 2.1
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "*This is a text notification*",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+          event: always
 workflows:
-  your-workflow:
+  send-notification:
     jobs:
-      - build
+      - notify:
+          context: slack-secrets      
 ```
 
-To get started with enabling notifications in Slack *for a specific project*, head to the *Settings* page for your project. Click on *Slack Integration* in the sidebar and follow the steps to setup Slack.
-
-![]({{ site.baseurl }}/assets/img/docs/notification-page-slack.png)
-
-It is also possible to use the Slack Orb to provide other types of notifications, including notifying a slack channel of a pending approval or sending a status alert at the end of a job based on success or failure. To view such usage examples, consult the [CircleCI Slack Orb page](https://circleci.com/orbs/registry/orb/circleci/slack).
+CircleCI's Slack orb can be used to provide other types of notifications, including notifying a slack channel of a pending approval or sending a status alert at the end of a job based on success or failure. For more information and to view usage examples, see the [CircleCI Slack orb page](https://circleci.com/developer/orbs/orb/circleci/slack).
 
 ### Using the IRC Orb
 
-The [IRC orb](https://circleci.com/orbs/registry/orb/circleci/irc) is similar to the Slack orb, but only has one main feature: sending custom IRC notifications from CircleCI. Consider this example configuration:
+The [IRC orb](https://circleci.com/developer/orbs/orb/circleci/irc) is similar to the Slack orb, but only has one main feature: sending custom IRC notifications from CircleCI. Consider this example configuration:
 
 ```yaml
 version: 2.1
@@ -121,6 +134,9 @@ jobs:
   build:
     docker:
       - image: <docker image>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - irc/notify:
           server: 'IRC-server-to-connect-to' # default: IRC_SERVER environment varible.
@@ -137,8 +153,8 @@ workflows:
       - build
 ```
 
-## Third Party Tools
+## Third party tools
 
-### Chroma Feedback
+### Chroma feedback
 
 [Chroma Feedback](https://github.com/redaxmedia/chroma-feedback) is a command line tool in Python to turn your RGB powered hardware into an build indicator. The idea of such extreme visibility is to encourage developers to instantly repair their builds.

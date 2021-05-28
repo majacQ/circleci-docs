@@ -9,9 +9,6 @@ version:
 :icons: font
 :toc: macro
 :toc-title:
-:sectanchors:
-
-[.serveronly]_This document is intended for system administrators of self-hosted installations of CircleCI Server._
 
 CircleCI 2.0 uses https://www.hashicorp.com/blog/nomad-announcement/[Nomad] as the primary job scheduler. This chapter provides a basic introduction to Nomad for understanding how to operate the Nomad Cluster in your CircleCI 2.0 installation.
 
@@ -94,6 +91,7 @@ Complete the following steps to get logs from the allocation of the specified jo
 === Scaling the Cluster
 
 By default, your Nomad Client is set up within an Auto Scaling Group (ASG) within AWS. To view settings:
+
 . Go to your EC2 Dashboard and select Auto Scaling Groups from the left hand menu
 . Select your Nomad Client
 . Select Actions > Edit to set Desired/Minimum/Maximum counts. This defines the number of Nomad Clients to spin up and keep available. Use the Scaling Policy tab to scale up your group automatically at your busiest times, see below for best practices for defining scaling policies. Use <<monitoring#nomad-job-metrics,nomad job metrics>> to assist in defining your scaling policies.

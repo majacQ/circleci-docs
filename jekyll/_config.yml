@@ -20,6 +20,8 @@ algolia:
   application_id: U0RXNGRK45
   api_key: dd49f5b81d238d474b49645a4daed322 # search-only API Key; safe for front-end code
   index_name: documentation
+  index_name_orbs: orbs-prod
+  index_name_cimgs: images_prod
   extensions_to_index:
     - html
     - md
@@ -53,7 +55,7 @@ liquid:
 asciidoc:
   attributes:
       source-highlighter: rouge
-      serverversion: 2.19.6
+      serverversion: 2.19.11
 
 asciidoctor:
   base_dir: _cci2/
@@ -61,8 +63,8 @@ asciidoctor:
   attributes:
     imagesdir: /docs/assets/img/docs/
     relfileprefix: ../
-    outfilesuffix: /index.html 
-    serverversion: 2.19.6
+    outfilesuffix: /index.html
+    serverversion: 2.19.11
 
 collections:
   # this is named with an underscore because it needs to be processed

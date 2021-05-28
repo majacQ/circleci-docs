@@ -15,9 +15,9 @@ This document provides sample [`.circleci/config.yml`]({{ site.baseurl }}/2.0/co
 * TOC
 {:toc}
 
-## Simple Configuration Examples
+## Simple configuration examples
 
-### Concurrent Workflow
+### Concurrent workflow
 
 The configuration example below shows a concurrent  workflow in which the `build` and `test` jobs run at the same time. Refer to the [Workflows]({{ site.baseurl }}/2.0/workflows) document for complete details about orchestrating job runs with concurrent, sequential, and manual approval workflows.
 
@@ -33,12 +33,18 @@ jobs:
   build:
     docker:
       - image: circleci/<language>:<version TAG>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: echo "this is the build job"
   test:
     docker:
       - image: circleci/<language>:<version TAG>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: echo "this is the test job"
@@ -60,12 +66,18 @@ jobs:
   build:
     docker:
       - image: circleci/<language>:<version TAG>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: echo "this is the build job"
   test:
     docker:
       - image: circleci/<language>:<version TAG>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: echo "this is the test job"
@@ -79,7 +91,7 @@ workflows:
       - test
 ```
 
-### Sequential Workflow
+### Sequential workflow
 
 The configuration example below shows a sequential job workflow where the `build` job runs and then the `test` job runs once `build` has completed. Refer to the [Workflows]({{ site.baseurl }}/2.0/workflows) document for complete details about orchestrating job runs with concurrent, sequential, and manual approval workflows.
 
@@ -95,12 +107,18 @@ jobs:
   build:
     docker:
       - image: circleci/<language>:<version TAG>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: echo "this is the build job"
   test:
     docker:
       - image: circleci/<language>:<version TAG>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: echo "this is the test job"
@@ -123,12 +141,18 @@ jobs:
   build:
     docker:
       - image: circleci/<language>:<version TAG>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: echo "this is the build job"
   test:
     docker:
       - image: circleci/<language>:<version TAG>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: echo "this is the test job"
@@ -144,7 +168,7 @@ workflows:
             - build
 ```
 
-### Approval Job
+### Approval job
 
 The example below shows a sequential job workflow with an approval step. The `build` job runs, then the `test` job, then a `hold` job, with `type: approval` ensures the workflow waits for manual approval before the `deploy` job can run. Refer to the [Workflows]({{ site.baseurl }}/2.0/workflows) document for complete details about orchestrating job runs with concurrent, sequential, and manual approval workflows.
 
@@ -161,18 +185,27 @@ jobs:
   build:
     docker:
       - image: circleci/<language>:<version TAG>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: my-build-commands
   test:
     docker:
       - image: circleci/<language>:<version TAG>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: my-test-commands
   deploy:
     docker:
       - image: circleci/<language>:<version TAG>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: my-deploy-commands
@@ -204,18 +237,27 @@ jobs:
   build:
     docker:
       - image: circleci/<language>:<version TAG>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: my-build-commands
   test:
     docker:
       - image: circleci/<language>:<version TAG>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: my-test-commands
   deploy:
     docker:
       - image: circleci/<language>:<version TAG>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: my-deploy-commands
@@ -239,7 +281,7 @@ workflows:
             - hold
 ```
 
-## Sample Configuration with Sequential Workflow
+## Sample configuration with sequential workflow
 
 Following is a sample `.circleci/config.yml` file using the following configuration features: 
 
@@ -280,8 +322,14 @@ jobs:
     docker:
       # The primary container is an instance of the first image listed. The job's commands run in this container.
       - image: cimg/node:current
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       # The secondary container is an instance of the second listed image which is run in a common network where ports exposed on the primary container are available on localhost.
       - image: mongo:4.2
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       # Reuse the workspace from the build job
       - attach_workspace:
@@ -329,8 +377,14 @@ jobs:
     # The primary container is an instance of the first image listed. The job's commands run in this container.
     docker:
       - image: circleci/node:4.8.2-jessie
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     # The secondary container is an instance of the second listed image which is run in a common network where ports exposed on the primary container are available on localhost.
       - image: mongo:3.4.4-jessie
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run:
@@ -348,7 +402,13 @@ jobs:
   test:
     docker:
       - image: circleci/node:4.8.2-jessie
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       - image: mongo:3.4.4-jessie
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run:
@@ -380,7 +440,7 @@ workflows:
 
 This example shows a sequential workflow with the `test` job configured to run only on the master branch. Refer to the [Workflows]({{ site.baseurl }}/2.0/workflows) document for complete details about orchestrating job runs with concurrent, sequential, and manual approval workflows.
 
-## Sample Configuration with Fan-in/Fan-out Workflow
+## Sample configuration with fan-in/fan-out workflow
 Below are two sample configurations for a Fan-in/Fan-out workflow. 
 
 For the Server/`2.0` config example, refer to [the complete demo repo on GitHub](https://github.com/CircleCI-Public/circleci-demo-workflows/blob/fan-in-fan-out/.circleci/config.yml) for details. 
@@ -401,6 +461,9 @@ jobs:
     prepare-dependencies:
         docker:
             - image: node:current-alpine
+              auth:
+                username: mydockerhub-user
+                password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         steps:
             - checkout
             - run:
@@ -427,6 +490,9 @@ jobs:
     build-production:
         docker:
             - image: node:current-alpine
+              auth:
+                username: mydockerhub-user
+                password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         steps:
             - attach_workspace:
                   at: .
@@ -466,6 +532,9 @@ jobs:
     test:
         docker:
             - image: node:current-alpine
+              auth:
+                username: mydockerhub-user
+                password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         parallelism: 2
         steps:
             - attach_workspace:
@@ -533,7 +602,13 @@ jobs:
   checkout_code:
     docker:
       - image: circleci/ruby:2.4-node-jessie
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       - image: circleci/postgres:9.4.12-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     working_directory: ~/circleci-demo-workflows
     steps:
       - checkout
@@ -545,7 +620,13 @@ jobs:
   bundle_dependencies:
     docker:
       - image: circleci/ruby:2.4-node-jessie
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       - image: circleci/postgres:9.4.12-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     working_directory: ~/circleci-demo-workflows
     steps:
       - restore_cache:
@@ -561,7 +642,13 @@ jobs:
   rake_test:
     docker:
       - image: circleci/ruby:2.4-node-jessie
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       - image: circleci/postgres:9.4.12-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     working_directory: ~/circleci-demo-workflows
     steps:
       - restore_cache:
@@ -577,7 +664,13 @@ jobs:
   precompile_assets:
     docker:
       - image: circleci/ruby:2.4-node-jessie
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
       - image: circleci/postgres:9.4.12-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     working_directory: ~/circleci-demo-workflows
     steps:
       - restore_cache:
@@ -634,7 +727,7 @@ workflows:
 
 **Note:** a job can only run when its dependencies are satisfied therefore it requires the dependencies of all upstream jobs. This means only the immediate upstream dependencies need to be specified in the `requires:` blocks.
 
-## Sample Configuration with Multiple Executor Types
+## Sample configuration with multiple executor types
 
 It is possible to use multiple [executor types](https://circleci.com/docs/2.0/executor-types/)
 in the same workflow. 
@@ -665,6 +758,9 @@ jobs:
   build-linux:
     docker:
       - image: archlinux/base
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     parameters:
       label:
         type: string
@@ -790,6 +886,9 @@ jobs:
   test-linux:
     docker:
       - image: cimg/base:stable
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     parameters:
       label:
         type: string
@@ -939,6 +1038,9 @@ jobs:
   swiftlint:
     docker:
       - image: dantoml/swiftlint:latest
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: swiftlint lint --reporter junit | tee result.xml
@@ -950,6 +1052,9 @@ jobs:
   danger:
     docker:
       - image: dantoml/danger:latest
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: danger
@@ -963,7 +1068,7 @@ workflows:
 ```
 {% endraw %}
 
-## See Also
+## See also
 {:.no_toc}
 
 * See the [Concepts document]({{ site.baseurl }}/2.0/concepts/#configuration) and [Workflows]({{ site.baseurl }}/2.0/workflows/) for more details of the concepts covered in this example.

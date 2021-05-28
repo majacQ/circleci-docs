@@ -194,7 +194,7 @@ curl -X POST --header "Content-Type: application/json" -H "Circle-Token: <circle
   "build_parameters": { // optional
     "RUN_EXTRA_TESTS": "true"
   }
-}
+}'
 
 https://circleci.com/api/v1.1/project/:vcs-type/:username/:project
 ```
@@ -295,7 +295,7 @@ curl -X POST --header "Content-Type: application/json" -H "Circle-Token: <circle
   "build_parameters": { // optional
     "RUN_EXTRA_TESTS": "true"
   }
-}
+}'
 
 https://circleci.com/api/v1.1/project/:vcs-type/:username/:project/tree/:branch
 ```
@@ -405,6 +405,7 @@ curl -X POST https://circleci.com/api/v1.1/project/:vcs-type/:username/:project/
 
 <aside class="notice">
 Prerequisite: You must go to your Project Settings in the CircleCI app and enable pipelines. This endpoint does not yet support the <code>build_parameters</code> options that the job-triggering endpoint supports.
+This also means that this endpoint is not available for CircleCI Server.
 </aside>
 
 **Parameter** | **Description**

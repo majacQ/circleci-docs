@@ -2,6 +2,8 @@
 ---
 @import 'variables';
 @import 'sidebar';
+@import 'footer';
+@import 'subnav';
 @import 'instantsearch';
 @import 'tooltip';
 
@@ -14,11 +16,11 @@ body{
 	font-family: 'Roboto', sans-serif;
 }
 h1, h2, h3, h4, h5, h6 {
-	font-family: 'Roboto';
+	font-family: 'Roboto', sans-serif;
   font-weight: 500;
 }
 p {
-	font-family: 'Roboto';
+	font-family: 'Roboto', sans-serif;
 	color: $body-text-color;
 }
 
@@ -38,20 +40,16 @@ div.main-body{
 
 div.main-body {
 	display: flex;
-	max-width: 1200px;
+	max-width: 1920px;
 	margin: 0 auto;
 	background: #fff;
-}
-
-#hits-template {
-	display: block;
-	max-width: 1180px;
-	margin: 50px auto 0 auto;
+  overflow: inherit;
+  flex-direction: column;
 }
 
 .text-center-small-float-right {
   float: right;
-  @media screen and (max-width: $screen-sm) {
+  @media screen and (max-width: $screen-xs-max) {
     text-align: center;
     float: none;
   }
@@ -59,7 +57,7 @@ div.main-body {
 
 .text-center-small-float-left {
   float: left;
-  @media screen and (max-width: $screen-sm) {
+  @media screen and (max-width: $screen-xs-max) {
     text-align: center;
     float: none;
   }
@@ -141,16 +139,20 @@ nav.nav-toggle.two {
 	}
 }
 
+div.sidebar-offset {
+  margin-left: $leftbar-width;
+}
 
 // Article
 div.article-container{
 	float: left;
-	@media screen and (max-width: $screen-sm) {
+	@media screen and (max-width: $screen-xs-max) {
 		padding: 0 16px 0 16px;
 		width: 100%;
 	}
-	padding: 60px 48px 0 48px;
-	width: calc(100% - 260px);
+	padding: 60px 96px 0 48px;
+	width: calc(100% - #{$rightbar-width});
+  max-width: 60em; // increase readability on large screens.
 }
 	article{
 		h2,
@@ -247,12 +249,12 @@ div.align-center{
 // Homepage
 body.homepage{
   .article-container{
-    @media screen and (max-width: $screen-sm) {
+    @media screen and (max-width: $screen-xs-max) {
   	  padding: 0 16px 0 16px;
       width: 100%;
     }
 	  padding: 60px 48px 0 48px;
-    width: calc(100% - 260px);
+    width: calc(100% - $leftbar-width);
   }
 
 	article{
@@ -459,4 +461,51 @@ pre {
 
 h6{
 	font-size: 16px;
+}
+
+// Table of Contents Sidebar ----------------------------------
+.table-of-contents {
+    position: sticky;
+    right: 0;
+    padding: 32px 32px 112px 12px;
+    background: #ffffff;
+    height: 90vh;
+    width: $rightbar-width;
+    overflow: scroll;
+    top: 118px;
+    font-size: 16px;
+    transition: all 0.5s ease-in-out;
+
+    @media(max-width: $toc-breakpoint) {
+        right: -500px;
+
+        &.open {
+            right: 0px;
+        }
+    }
+
+
+    .toc-heading {
+        margin-left: -2px;
+    }
+
+    .toc-indent {
+      border-left: 2px solid #EEEEEE;
+      a {
+        color: $body-text-color;
+        &:hover {
+          color: $link-text-color;
+        }
+
+      }
+    }
+
+    ul, li {
+        list-style-type: none;
+        padding-left: 12px;
+        margin: 4px 0;
+        &:first {
+            padding-left: 0px;
+        }
+    }
 }
