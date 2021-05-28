@@ -13,8 +13,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+  <<<<<<< snyk-upgrade-910acb755f15e53edfc2ebe49fa07eba
+    "openapi-snippet": "^0.9.1",
+    "redoc-cli": "^0.10.4",
+  =======
     "openapi-snippet": "^0.9.2",
     "redoc-cli": "^0.9.10",
+  >>>>>>> master
     "snippet-enricher-cli": "0.0.8"
   }
 }
