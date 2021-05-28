@@ -119,9 +119,15 @@ GEM
       rb-inotify (~> 0.9, >= 0.9.10)
     mercenary (0.3.6)
     mini_portile2 (2.5.1)
+  <<<<<<< snyk-fix-cb338d34c3dbd4a97a83e7c882cf0f9e
     minitest (5.14.4)
     multi_json (1.13.1)
     nokogiri (1.11.4)
+  =======
+    minitest (5.14.1)
+    multi_json (1.13.1)
+    nokogiri (1.11.5)
+  >>>>>>> master
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     nokogumbo (2.0.5)
