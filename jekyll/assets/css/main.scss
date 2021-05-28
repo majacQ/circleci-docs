@@ -32,21 +32,28 @@ a {
 	}
 }
 
-
-div.main-body{
-	overflow: auto;
+.container-semi-fluid {
+  padding-left: 15px;
+  padding-right: 15px;
+  position: relative;
 }
 
+.container-semi-fluid,
+div.main-body{
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+
 div.main-body {
+  overflow: auto;
 	display: flex;
-	max-width: 1200px;
-	margin: 0 auto;
 	background: #fff;
 }
 
 .text-center-small-float-right {
   float: right;
-  @media screen and (max-width: $screen-sm) {
+  @media screen and (max-width: $screen-xs-max) {
     text-align: center;
     float: none;
   }
@@ -54,7 +61,7 @@ div.main-body {
 
 .text-center-small-float-left {
   float: left;
-  @media screen and (max-width: $screen-sm) {
+  @media screen and (max-width: $screen-xs-max) {
     text-align: center;
     float: none;
   }
@@ -140,7 +147,7 @@ nav.nav-toggle.two {
 // Article
 div.article-container{
 	float: left;
-	@media screen and (max-width: $screen-sm) {
+	@media screen and (max-width: $screen-xs-max) {
 		padding: 0 16px 0 16px;
 		width: 100%;
 	}
@@ -242,7 +249,7 @@ div.align-center{
 // Homepage
 body.homepage{
   .article-container{
-    @media screen and (max-width: $screen-sm) {
+    @media screen and (max-width: $screen-xs-max) {
   	  padding: 0 16px 0 16px;
       width: 100%;
     }

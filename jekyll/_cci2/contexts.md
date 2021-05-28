@@ -27,7 +27,9 @@ Create and manage contexts on the Organization Settings page of the CircleCI app
 
 To use environment variables set on the Contexts page, the person running the workflow must be a member of the organization for which the context is set. 
 
-Context names must be unique for each GitHub or Bitbucket organization. **Note:** Contexts created with the initial default name of `org-global` will continue to work. 
+Context names must be unique for each GitHub or Bitbucket organization. 
+
+**Note:** Contexts created with the initial default name of `org-global` will continue to work. 
 
 ### Context naming for CircleCI server
 {:.no_toc}
@@ -115,13 +117,24 @@ jobs:
 
 If you move your repository to a new organization, you must also have the context with that unique name set in the new organization.
 
+### Contexts & Environment variables constraints
+
+When creating contexts/environment variables, please note the following:
+
+- The context name must be 200 or fewer characters, must contain at least one non-whitespace character, and must not contain leading, trailing or vertical whitespace.
+- The environment variable name must be 300 or fewer characters, begin with alpha or `_` as the first character, and use alphanumeric or `_` for the remaining characters.
+- An environment variable value must have 32k or fewer characters. 
+- An empty environment variable is considered valid.
+- Each context is limited to 100 environment variables.
+- Each organization is limited to 500 contexts.
+
 ## Combining contexts
 
 You can combine several contexts for a single job by just adding them to the context list. Contexts are applied in order, so in the case of overlaps, later contexts override earlier ones. This way you can scope contexts to be as small and granular as you like.
 
 ## Restricting a context
 
-CircleCI enables you to restrict secret environment variables at run time by adding security groups to contexts. Only organization administrators may add *security groups* to a new or existing context. Security groups are defined by GitHub teams. If you are using CircleCI Server with LDAP authentication, then LDAP groups also define security groups. After a security group is added to a context, only members of that security group who are also CircleCI users may access the context and use the associated environment variables. 
+CircleCI enables you to restrict secret environment variables at run time by adding security groups to contexts. Only organization administrators may add *security groups* to a new or existing context. Security groups are your organization's GitHub teams. If you are using CircleCI Server with LDAP authentication, then LDAP groups also define security groups. After a security group is added to a context, only members of that security group who are also CircleCI users may access the context and use the associated environment variables. 
 
 Organization administrators have read/write access to all projects and have unrestricted access to all contexts.
 
@@ -182,7 +195,7 @@ workflows:
             - test
 ```
 
-In this example, the jobs `test` and `deploy` are restricted, and will only run if the user who approves the `hold` job is a member of the security group assigned to the context `deploy-key-restricted-context`. When the workflow `build-test-deploy` runs, the `build` job will run, then the `hold` job, which presents a manual approval button in the CircleCI application. This approval job may be approved by _any_ member, but the jobs `test` and `deploy` will fail as `unauthorized` if the "approver" is not part of the restricted context security group.
+In this example, the jobs `test` and `deploy` are restricted, and will only run if the user who approves the `hold` job is a member of the security group assigned to the context `deploy-key-restricted-context`. When the workflow `build-test-deploy` runs, the `build` job will run, then the `hold` job, which presents a manual approval button in the CircleCI application. This approval job may be approved by _any_ member of the security group, but the jobs `test` and `deploy` will fail as `unauthorized` if the "approver" is not part of the restricted context security group.
 
 ## Removing groups from contexts
 
@@ -219,17 +232,126 @@ Environment variables are used according to a specific precedence order, as foll
 
 Environment variables declared inside a shell command `run step`, for example `FOO=bar make install`, will override environment variables declared with the `environment` and `contexts` keys. Environment variables added on the Contexts page will take precedence over variables added on the Project Settings page.
 
+
+### Secure Environment Variable Creation, Deletion, and Rotation
+
+This section will walk through interacting with context environment variables using the CircleCI CLI or API.
+
+#### Creating Environment Variables
+
+##### Using CircleCI’s CLI
+{:.no_toc}
+
+_If this is your first time using the CLI, follow the instructions on 
+[CircleCI CLI Configuration](https://circleci.com/docs/2.0/local-cli/?section=configuration)
+to set up your CircleCI command line interface._
+
+To create an environment variable using our CLI, perform the following steps:
+
+1. If you have not already done so, find the right context name that will contain the new environment variable. Execute this command in the CLI:
+`circleci context list <vcs-type> <org-name>`
+2. Store a new environment variable under that context. Execute this command in the CLI:
+`circleci context store-secret <vcs-type> <org-name> <context-name> <env-var-name>`
+
+Note that the CLI will prompt you to input the secret value, rather than accepting it 
+as an argument. This approach is designed to avoid unintentional secret exposure.
+
+##### Using CircleCI’s API
+{:.no_toc}
+
+To create an environment variable using the API, call the [Add Environment Variable](https://circleci.com/docs/api/v2/#operation/addEnvironmentVariableToContext)
+endpoint with the appropriate request body. For this request, replace the 
+`context-id` and the `env-var-name` with the ID for the context and the new 
+environment variable name. The request body should include a `value` key 
+containing the plaintext secret as a string.
+
+#### Deleting Environment Variables
+
+##### Using CircleCI’s CLI
+{:.no_toc}
+
+To delete an environment variable using the CLI, perform the following steps:
+
+1. If you have not already done so, find the context name that contains the 
+   environment variable you wish to delete. Execute this command in the CLI:
+   `circleci context list <vcs-type> <org-name>`
+
+2. Confirm the environment variable exists within that context. Execute this 
+   command in the CLI to list all variables under that context:
+   `circleci context show <vcs-type> <org-name> <context-name>`
+
+3. Delete the environment variable by executing this command:
+   `circleci context remove-secret <vcs-type> <org-name> <context-name> <env-var-name>`
+
+##### Using CircleCI’s API
+{:.no_toc}
+
+To delete an environment variable using the API, call the [Delete Environment Variable](https://circleci.com/docs/api/v2/#operation/addEnvironmentVariableToContext) endpoint.
+
+For this request, replace the `context-id` and the `env-var-name` with the ID 
+   for the context and the environment variable name that should be updated.
+
+#### Rotating Environment Variables
+
+Rotation refers to the process of updating a secret's value without deleting it 
+or changing its name.
+
+Because environment variables can be shared, passed around between employees and
+teams, and exposed inadvertently, it is always good practice to periodically
+rotate secrets. Many organizations automate this process, running a script when
+an employee leaves the company or when a secret may have been compromised.
+
+Context environment variables can be rotated using CircleCI’s CLI, or by
+directly accessing the API.
+
+
+##### Using CircleCI’s CLI
+{:.no_toc}
+
+_If this is your first time using the CLI, follow the instructions on 
+[CircleCI CLI Configuration](https://circleci.com/docs/2.0/local-cli/?section=configuration)
+to set up your CircleCI command line interface._
+
+To rotate an environment variable using the CLI, perform the following steps:
+
+1. If you have not already done so, find the context name that contains the
+   variable you would like to rotate. Execute this command in the CLI:
+   `circleci context list <vcs-type> <org-name>`
+  
+2. Find the environment variable to rotate within that context. Execute this command in the CLI:
+   `circleci context show <vcs-type> <org-name> <context-name>`
+
+3. Update the existing environment variable under that context. Execute this
+   command in the CLI and replace the `env-var-name` with the name of the
+   environment variable from Step 2:
+  `circleci context store-secret <vcs-type> <org-name> <context-name> <env-var-name>`
+
+Note that the CLI will prompt you to input the secret value, rather than accepting it 
+as an argument. This approach is designed to avoid unintentional secret exposure.
+
+##### Using CircleCI’s API
+{:.no_toc}
+
+To rotate an environment variable from our API, call the [Update Environment Variable](https://circleci.com/docs/api/v2/#operation/addEnvironmentVariableToContext)
+endpoint with the appropriate request body. For this request, replace the `context-id` 
+and the `env-var-name` with the ID for the context and the environment variable name 
+that should be updated. The request body should include a `value` key containing the 
+plaintext secret as a string.
+
+
 ## Secrets masking
 _Secrets masking is not currently available on self-hosted installations of CircleCI Server_
 
-Contexts hold project secrets or keys that perform crucial functions for your applications. For added security CircleCI performs secret masking on the build output, obscuring the `echo` or `print` output of contexts.
+Contexts hold potentially sensitive secrets that are not intended to be exposed. For added security, 
+CircleCI performs secret masking on the build output, obscuring `echo` or `print` output that 
+contains env var values.
 
 The value of the context will not be masked in the build output if:
 
-* the value of the context is less than 4 characters
-* the value of the context is equal to one of `true`, `True`, `false` or `False`
+* the value is less than 4 characters
+* the value is equal to one of `true`, `True`, `false` or `False`
 
-**Note:** secret masking will only prevent the value of the context from appearing in your build output. The value of the context is still accessible to users [debugging builds with SSH]({{ site.baseurl }}/2.0/ssh-access-jobs).
+**Note:** secret masking will only prevent the secret value from appearing in your build output. The value is still accessible to code executed within your builds and users [debugging builds with SSH]({{ site.baseurl }}/2.0/ssh-access-jobs).
 
 ## See also
 {:.no_toc}
