@@ -5,12 +5,16 @@ short-title: "Examples"
 description: "CircleCI 2.0 Examples Introduction"
 categories: [migration]
 order: 1
+version:
+- Cloud
+- Server v2.x
 ---
 
 
-It is possible to build, test, and deploy applications that run on Linux, Android, iOS and Windows with CircleCI. See the following snippets for a peak into how you can customize the configuration of a job for any platform. You may also configure jobs to run on multiple platforms in a single [`.circleci/config.yml`]({{ site.baseurl }}/2.0/configuration-reference/) file. 
+It is possible to build, test, and deploy applications that run on Linux, Android, iOS and Windows with CircleCI. See the following snippets for a peek into how you can customize the configuration of a job for any platform. You may also configure jobs to run on multiple platforms in a single [`.circleci/config.yml`]({{ site.baseurl }}/2.0/configuration-reference/) file.
 
 ## Linux with Docker
+{: #linux-with-docker }
 
 {% raw %}
 
@@ -21,9 +25,15 @@ jobs:
     working_directory: ~/mern-starter
     # The primary container is an instance of the first image listed. The job's commands run in this container.
     docker:
-      - image: circleci/node:4.8.2-jessie
+      - image: circleci/node:14.17.3-buster
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     # The secondary container is an instance of the second listed image which is run in a common network where ports exposed on the primary container are available on localhost.
       - image: mongo:3.4.4-jessie
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run:
@@ -42,7 +52,8 @@ jobs:
 
 {% endraw %}
 
-## Linux with Machine
+## Linux with machine
+{: #linux-with-machine }
 
 **Note**: Use of machine may require additional fees in a future pricing update.
 
@@ -56,6 +67,7 @@ jobs:
 ```
 
 ## Android
+{: #android }
 
 {% raw %}
 
@@ -66,6 +78,9 @@ jobs:
     working_directory: ~/code
     docker:
       - image: circleci/android:api-25-alpha
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     environment:
       JVM_OPTS: -Xmx3200m
     steps:
@@ -80,9 +95,11 @@ jobs:
           command: ./gradlew androidDependencies
 ```
 
-{% endraw %}          
+{% endraw %}
 
-## iOS
+## macOS
+{: #macos }
+_The macOS executor is not currently available on self-hosted installations of CircleCI Server_
 
 ```
 jobs:
@@ -101,6 +118,7 @@ jobs:
 ```
 
 ## Windows
+{: #windows }
 
 {:.tab.windowsblock.Cloud}
 ```yaml
@@ -136,6 +154,7 @@ jobs:
         - run: Write-Host 'Hello, Windows'
 ```
 
-## See Also
+## See also
+{: #see-also }
 
 Learn more about the [executor types]({{ site.baseurl }}/2.0/executor-types/) used in the examples above.

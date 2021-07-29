@@ -5,13 +5,17 @@ short-title: "Elixir"
 description: "Overview and sample config for an Elixir project"
 categories: [language-guides]
 order: 2
+version:
+- Cloud
+- Server v2.x
 ---
 
 This is an annotated `config.yml` for a simple Phoenix web application, which you can access at <https://github.com/CircleCI-Public/circleci-demo-elixir-phoenix>.
 
 If you're in a rush, just copy the configuration below into [`.circleci/config.yml`]({{ site.baseurl }}/2.0/configuration-reference/) in your project's root directory. Otherwise, we recommend reading through the whole configuration for better understanding.
 
-## Sample Configuration
+## Sample configuration
+{: #sample-configuration }
 
 {% raw %}
 
@@ -22,9 +26,15 @@ jobs:  # basic units of work in a run
     parallelism: 1  # run only one instance of this job
     docker:  # run the steps with Docker
       - image: circleci/elixir:1.7.3  # ...with this image as the primary container; this is where all `steps` will run
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         environment:  # environment variables for primary container
           MIX_ENV: test
       - image: circleci/postgres:10.1-alpine  # database image
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         environment:  # environment variables for database
           POSTGRES_USER: postgres
           POSTGRES_DB: app_test
@@ -69,7 +79,8 @@ jobs:  # basic units of work in a run
 
 {% endraw %}
 
-## Config Walkthrough
+## Config walkthrough
+{: #config-walkthrough }
 
 Every `config.yml` starts with the [`version`]({{ site.baseurl }}/2.0/configuration-reference/#version) key.
 This key is used to issue warnings about breaking changes.
@@ -89,7 +100,7 @@ By default, the value of `working_directory` is `~/project`, where `project` is 
 The steps of a job occur in a virtual environment called an [executor]({{ site.baseurl }}/2.0/executor-types/).
 
 In this example, the [`docker`]({{ site.baseurl }}/2.0/configuration-reference/#docker) executor is used
-to specify a custom Docker image. We use the [CircleCI-provided Elixir docker image](https://circleci.com/docs/2.0/circleci-images/#elixir). 
+to specify a custom Docker image. We use the [CircleCI-provided Elixir docker image](https://circleci.com/docs/2.0/circleci-images/#elixir).
 
 ```yaml
 jobs:
@@ -97,15 +108,21 @@ jobs:
     parallelism: 1
     docker:
       - image: circleci/elixir:1.7.3
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         environment:
           MIX_ENV: test
       - image: circleci/postgres:10.1-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: app_test
           POSTGRES_PASSWORD:
 
-    working_directory: ~/app 
+    working_directory: ~/app
 ```
 
 
@@ -169,23 +186,25 @@ available in the CircleCI web app.
 ```
 
 ## Parallelism
+{: #parallelism }
 
 **Splitting by Timings**
 
-As of version 2.0, CircleCI requires users to upload their own JUnit XML [test output](https://circleci.com/docs/2.0/collect-test-data/#enabling-formatters). Currently the main/only Elixir library that produces that output is [JUnitFormatter](https://github.com/victorolinasc/junit-formatter). 
+As of version 2.0, CircleCI requires users to upload their own JUnit XML [test output](https://circleci.com/docs/2.0/collect-test-data/#enabling-formatters). Currently the main/only Elixir library that produces that output is [JUnitFormatter](https://github.com/victorolinasc/junit-formatter).
 
-In order to allow CircleCI's parallelization to use the `--split-by=timings` strategy with the XML output, you need to configure JUnitFormatter with the `include_filename?: true` option which will add the filename to the XML. 
+In order to allow CircleCI's parallelization to use the `--split-by=timings` strategy with the XML output, you need to configure JUnitFormatter with the `include_filename?: true` option which will add the filename to the XML.
 
 By default, JUnitFormatter saves the output to the `_build/test/lib/<application name>` directory, so in your `.circleci/config.yml` you will want to configure the `store_test_results` step to point to that same directory:
-  
+
 ```
   - store_test_results:
       path: _build/test/lib/<application name>
 ```
 
-However, JUnitFormatter also allows you to configure the directory where the results are saved via the `report_dir` setting, in which case, the `path` value in your CircleCI config should match the relative path of wherever you're storing the output. 
+However, JUnitFormatter also allows you to configure the directory where the results are saved via the `report_dir` setting, in which case, the `path` value in your CircleCI config should match the relative path of wherever you're storing the output.
 
-## See Also
+## See also
+{: #see-also }
 
 [Caching Dependencies]({{ site.baseurl }}/2.0/caching/)
 [Configuring Databases]({{ site.baseurl }}/2.0/databases/)

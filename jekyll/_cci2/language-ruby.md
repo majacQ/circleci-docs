@@ -5,14 +5,18 @@ short-title: "Ruby"
 description: "Building and Testing with Ruby and Rails on CircleCI 2.0"
 categories: [language-guides]
 order: 8
+version:
+- Cloud
+- Server v2.x
 ---
-    
-This guide will help you get started with a Ruby on Rails application on CircleCI. 
+
+This guide will help you get started with a Ruby on Rails application on CircleCI.
 
 * TOC
 {:toc}
 
 ## Overview
+{: #overview }
 {:.no_toc}
 
 If you’re in a rush, just copy the sample configuration below into a
@@ -29,6 +33,7 @@ The application uses Rails version 6.1, `rspec-rails`, and
 
 
 ## Pre-Built CircleCI Docker Images
+{: #pre-built-circleci-docker-images }
 
 This application build also uses one of the pre-built [CircleCI Docker
 Images]({{site.baseurl}}/2.0/circleci-images/).
@@ -42,7 +47,8 @@ Docker Hub in the `circleci` directory.
 
 ---
 
-## Sample Configuration
+## Sample configuration
+{: #sample-configuration }
 
 The following code block is commented to describe each part of the configuration
 for the sample application.
@@ -55,31 +61,40 @@ version: 2.1 # Use 2.1 to enable using orbs and other features.
 # Declare the orbs that we'll use in our config.
 # read more about orbs: https://circleci.com/docs/2.0/using-orbs/
 orbs:
-  ruby: circleci/ruby@1.0 
+  ruby: circleci/ruby@1.0
   node: circleci/node@2
 
 jobs:
   build: # our first job, named "build"
     docker:
       - image: cimg/ruby:2.7-node # use a tailored CircleCI docker image.
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout # pull down our git code.
       - ruby/install-deps # use the ruby orb to install dependencies
       # use the node orb to install our packages
       # specifying that we use `yarn` and to cache dependencies with `yarn.lock`
       # learn more: https://circleci.com/docs/2.0/caching/
-      - node/install-packages: 
+      - node/install-packages:
           pkg-manager: yarn
           cache-key: "yarn.lock"
-          
+
   test:  # our next job, called "test"
     # we run "parallel job containers" to enable speeding up our tests;
     # this splits our tests across multiple containers.
-    parallelism: 3 
+    parallelism: 3
     # here we set TWO docker images.
     docker:
       - image: cimg/ruby:2.7-node # this is our primary docker image, where step commands run.
-      - image: circleci/postgres:9.5-alpine 
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+      - image: circleci/postgres:9.5-alpine
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         environment: # add POSTGRES environment variables.
           POSTGRES_USER: circleci-demo-ruby
           POSTGRES_DB: rails_blog_test
@@ -94,12 +109,12 @@ jobs:
       RAILS_ENV: test
     # A series of steps to run, some are similar to those in "build".
     steps:
-      - checkout 
-      - ruby/install-deps 
+      - checkout
+      - ruby/install-deps
       - node/install-packages:
           pkg-manager: yarn
           cache-key: "yarn.lock"
-      # Here we make sure that the secondary container boots 
+      # Here we make sure that the secondary container boots
       # up before we run operations on the database.
       - run:
           name: Wait for DB
@@ -124,15 +139,17 @@ workflows:
 {% endraw %}
 
 
-## Build the Demo Ruby on Rails Project Yourself
-  
+## Build the demo Ruby on Rails project yourself
+{: #build-the-demo-ruby-on-rails-project-yourself }
+
 A good way to start using CircleCI is to build a project yourself. Here's how to build the demo project with your own account:
 
 1. [Fork the project][fork-demo-project] on GitHub to your own account.
 2. Go to the [Add Projects](https://circleci.com/add-projects){:rel="nofollow"} page in CircleCI and click the Build Project button next to the project you just forked.
 3. To make changes you can edit the `.circleci/config.yml` file and make a commit. When you push a commit to GitHub, CircleCI will build and test the project.
 
-## See Also
+## See also
+{: #see-also }
 {:.no_toc}
 
 See the [Deploy]({{ site.baseurl }}/2.0/deployment-integrations/) document for examples of deploy target configurations.

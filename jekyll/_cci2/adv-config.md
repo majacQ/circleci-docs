@@ -9,9 +9,10 @@ order: 2
 
 CircleCI supports many advanced configuration options and features, check out the snippets below to get an idea of what is possible, and get tips for optimizing your advanced configurations.
 
-## Check Your Scripts
+## Check your scripts
+{: #check-your-scripts }
 
-Use the shellcheck orb to check all scripts in a project. Check the [shellcheck page in the orb registry](https://circleci.com/orbs/registry/orb/circleci/shellcheck) for versioning and further usage examples (remember to replace x.y.z with a valid version):
+Use the shellcheck orb to check all scripts in a project. Check the [shellcheck page in the orb registry](https://circleci.com/developer/orbs/orb/circleci/shellcheck) for versioning and further usage examples (remember to replace x.y.z with a valid version):
 
 ```yaml
 version: 2.1
@@ -34,6 +35,9 @@ jobs:
   shellcheck:
     docker:
       - image: nlknguyen/alpine-shellcheck:v0.4.6
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run:
@@ -45,9 +49,10 @@ jobs:
 
 For more information on using shell scripts in your config, see the [Using Shell Scripts]({{site.baseurl}}/2.0/using-shell-scripts/) guide.
 
-## Browser Testing
+## Browser testing
+{: #browser-testing }
 
-Use Selenium to manage in-browser tesing:
+Use Selenium to manage in-browser testing:
 
 ```yaml
 version: 2
@@ -55,7 +60,10 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node-jessie-browsers
+      - image: circleci/node:buster-browsers
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run: mkdir test-reports
@@ -70,7 +78,8 @@ jobs:
 
 For more information on browser testing, see the [Browser Testing]({{site.baseurl}}/2.0/browser-testing/) guide.
 
-## Database Testing
+## Database testing
+{: #database-testing }
 
 Use a service container to run database testing:
 
@@ -82,11 +91,17 @@ jobs:
     # Primary container image where all commands run
     docker:
       - image: circleci/python:3.6.2-stretch-browsers
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
         environment:
           TEST_DATABASE_URL: postgresql://root@localhost/circle_test
 
     # Service container image
       - image: circleci/postgres:9.6.5-alpine-ram
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
 
     steps:
       - checkout
@@ -109,7 +124,8 @@ jobs:
 
 For more information on configuring databases, see the [Configuring Databases]({{site.baseurl}}/2.0/databases/) guide.
 
-## Run Docker Commands to Build Your Docker Images
+## Run Docker commands to build your Docker images
+{: #run-docker-commands-to-build-your-docker-images }
 
 Run Docker commands to build Docker images. Set up a remote Docker environment when your primary executor is Docker:
 
@@ -120,6 +136,9 @@ jobs:
   build:
     docker:
       - image: <primary-container-image>
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       # ... steps for building/testing app ...
 
@@ -137,7 +156,8 @@ jobs:
 
 For more information on building Docker images, see the [Building Docker Images]({{site.baseurl}}/2.0/building-docker-images/) guide.
 
-## Tips for Advanced Configuration
+## Tips for advanced configuration
+{: #tips-for-advanced-configuration }
 
 Here are a few tips for optimization and maintaining a clear configuration file.
 
@@ -147,7 +167,8 @@ Here are a few tips for optimization and maintaining a clear configuration file.
 - Using a "setup" job at the _start_ of a workflow can be helpful to do some preflight checks and populate a workspace for all the following jobs.
 
 
-## See Also
+## See also
+{: #see-also }
 
 [Optimizations]({{ site.baseurl }}/2.0/optimizations/)
 [Configuration Cookbook]({{ site.baseurl }}/2.0/configuration-cookbook/)

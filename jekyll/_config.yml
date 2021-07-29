@@ -8,17 +8,25 @@ description: > # this means to ignore newlines until "baseurl:"
 url: "http://localhost:4040" # the base hostname & protocol for your site
 baseurl: "/docs" # the subpath of your site, e.g. /blog
 gh_url: "https://github.com/circleci/circleci-docs"
+devhub_base_url: "https://circleci.com/developer"
+
+exclude:
+  - .jekyll-cache
 
 plugins:
+  - jekyll-include-cache
   - jekyll-assets
   - jekyll-sitemap
   - jekyll-asciidoc
   - jekyll-target-blank
+  - jekyll-toc
 
 algolia:
   application_id: U0RXNGRK45
   api_key: dd49f5b81d238d474b49645a4daed322 # search-only API Key; safe for front-end code
   index_name: documentation
+  index_name_orbs: orbs-prod
+  index_name_cimgs: images_prod
   extensions_to_index:
     - html
     - md
@@ -39,6 +47,10 @@ algolia:
     ]
     minProximity: 3
 
+toc:
+  min_level: 1
+  max_level: 4
+
 sass:
   sass_dir: _sass
 
@@ -52,7 +64,11 @@ liquid:
 asciidoc:
   attributes:
       source-highlighter: rouge
-      serverversion: 2.19.4
+      serverversion: 3.1.0
+      terraformversion: 0.15.4
+      kubectlversion: 1.19
+      helmversion: 3.4.0
+      kotsversion: 1.44.1
 
 asciidoctor:
   base_dir: _cci2/
@@ -60,8 +76,12 @@ asciidoctor:
   attributes:
     imagesdir: /docs/assets/img/docs/
     relfileprefix: ../
-    outfilesuffix: /index.html 
-    serverversion: 2.19.4
+    outfilesuffix: /index.html
+    serverversion: 3.1.0
+    terraformversion: 0.15.4
+    kubectlversion: 1.19
+    helmversion: 3.4.0
+    kotsversion: 1.44.1
 
 collections:
   # this is named with an underscore because it needs to be processed
@@ -135,6 +155,12 @@ defaults:
     values:
       hide: false
       search: true
+
+  # Enable TOC by default
+  - scope:
+      path: ""
+    values:
+      toc: true
 
 t:
     translation_in_progress:
